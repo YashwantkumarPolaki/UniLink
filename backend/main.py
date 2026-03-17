@@ -1,7 +1,12 @@
+import sys
+import os
+# Ensure the backend directory itself is on sys.path so plain imports work
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.database import db
-from backend.routes import auth, events, doubts, opportunities, ai
+from database import db
+from routes import auth, events, doubts, opportunities, ai
 
 # Create FastAPI app
 app = FastAPI(

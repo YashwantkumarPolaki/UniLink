@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.models.doubt import CreateDoubtRequest, CreateAnswerRequest, UpdateDoubtRequest
-from backend.middleware.auth_middleware import get_current_user
-from backend.database import db
+from models.doubt import CreateDoubtRequest, CreateAnswerRequest, UpdateDoubtRequest
+from middleware.auth_middleware import get_current_user
+from database import db
 
 # All routes here start with /doubts
 router = APIRouter(prefix="/doubts", tags=["Doubts"])

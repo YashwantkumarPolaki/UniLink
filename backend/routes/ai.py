@@ -4,7 +4,7 @@ import httpx
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Literal, List, Optional
-from backend.middleware.auth_middleware import get_current_user
+from middleware.auth_middleware import get_current_user
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 

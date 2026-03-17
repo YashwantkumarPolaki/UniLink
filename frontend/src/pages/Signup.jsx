@@ -1,73 +1,64 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import API from '../api'
 
+// ─── Star Field Canvas ─────────────────────────────────────────────────────────
+function StarCanvas() {
+  const canvasRef = useRef(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    resize()
+    const stars = Array.from({ length: 160 }, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.3, o: Math.random() * 0.5 + 0.1,
+      dir: Math.random() > 0.5 ? 1 : -1, speed: Math.random() * 0.004 + 0.002,
+    }))
+    let animId
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      stars.forEach(s => {
+        s.o += s.speed * s.dir
+        if (s.o > 0.65 || s.o < 0.08) s.dir *= -1
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255,255,255,${s.o})`; ctx.fill()
+      })
+      animId = requestAnimationFrame(draw)
+    }
+    draw()
+    window.addEventListener('resize', resize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+  }, [])
+  return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
+}
+
+// ─── Custom Select (unchanged) ────────────────────────────────────────────────
 function CustomSelect({ name, value, onChange, options, placeholder, disabled }) {
   const [open, setOpen] = useState(false)
-
   const handleSelect = (val) => {
     onChange({ target: { name, value: val } })
     setOpen(false)
   }
-
   return (
     <div style={{ position: 'relative' }}>
       <button
         type="button"
         onClick={() => !disabled && setOpen(!open)}
-        style={{
-          width: '100%',
-          background: disabled ? 'rgba(255,255,255,0.02)' : '#1a1035',
-          border: `1px solid ${open ? 'rgba(167,139,250,0.5)' : 'rgba(255,255,255,0.1)'}`,
-          borderRadius: 12,
-          padding: '12px 16px',
-          color: value ? 'white' : 'rgba(255,255,255,0.3)',
-          fontSize: 14,
-          fontFamily: 'Inter, sans-serif',
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          textAlign: 'left',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          opacity: disabled ? 0.5 : 1,
-        }}
+        style={{ width: '100%', background: disabled ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${open ? 'rgba(124,92,191,0.5)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 10, padding: '12px 16px', color: value ? 'white' : 'rgba(255,255,255,0.3)', fontSize: 14, fontFamily: 'Inter, sans-serif', cursor: disabled ? 'not-allowed' : 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: disabled ? 0.5 : 1 }}
       >
         <span>{value || placeholder}</span>
-        <span style={{ color: '#a78bfa', fontSize: 12, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+        <span style={{ color: '#7c5cbf', fontSize: 12, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
       </button>
-
       {open && (
-        <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 4px)',
-          left: 0, right: 0,
-          background: '#1a1035',
-          border: '1px solid rgba(167,139,250,0.3)',
-          borderRadius: 12,
-          maxHeight: 220,
-          overflowY: 'auto',
-          zIndex: 1000,
-          boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
-        }}>
+        <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: '#13102a', border: '1px solid rgba(124,92,191,0.3)', borderRadius: 10, maxHeight: 220, overflowY: 'auto', zIndex: 1000, boxShadow: '0 16px 40px rgba(0,0,0,0.6)' }}>
           {options.map(opt => (
-            <div
-              key={opt}
-              onClick={() => handleSelect(opt)}
-              style={{
-                padding: '10px 16px',
-                color: value === opt ? '#a78bfa' : 'rgba(255,255,255,0.7)',
-                background: value === opt ? 'rgba(167,139,250,0.15)' : 'transparent',
-                fontSize: 14,
-                cursor: 'pointer',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: value === opt ? 600 : 400,
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(167,139,250,0.1)'}
-              onMouseLeave={e => e.currentTarget.style.background = value === opt ? 'rgba(167,139,250,0.15)' : 'transparent'}
-            >
-              {opt}
-            </div>
+            <div key={opt} onClick={() => handleSelect(opt)}
+              style={{ padding: '10px 16px', color: value === opt ? '#a78bfa' : 'rgba(255,255,255,0.7)', background: value === opt ? 'rgba(124,92,191,0.15)' : 'transparent', fontSize: 14, cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: value === opt ? 600 : 400, transition: 'background 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,92,191,0.1)'}
+              onMouseLeave={e => e.currentTarget.style.background = value === opt ? 'rgba(124,92,191,0.15)' : 'transparent'}
+            >{opt}</div>
           ))}
         </div>
       )}
@@ -75,6 +66,7 @@ function CustomSelect({ name, value, onChange, options, placeholder, disabled })
   )
 }
 
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const BRANCHES = [
   'CSE - AI & ML', 'CSE - Artificial Intelligence', 'CSE - Data Science',
   'CSE - Big Data Analytics', 'CSE - Cloud Computing',
@@ -159,7 +151,7 @@ const DEPARTMENTS = {
 const ROLES = ['student', 'faculty', 'club', 'company']
 const ROLE_LABELS = { student: '🎓 Student', faculty: '👨‍🏫 Faculty', club: '🏛️ Club', company: '🏢 Company / Recruiter' }
 
-// ─── Smart Email Detection ────────────────────────────────────────────────────
+// ─── Smart Email Detection (unchanged) ───────────────────────────────────────
 const COLLEGE_PATTERNS = [
   { pattern: /ra(\d{2})\d+@srmist\.edu\.in/,           college: 'SRM Institute of Science and Technology', shortName: 'SRMIST', extractYear: m => 2000 + parseInt(m[1]), duration: 4 },
   { pattern: /(\d{2})[a-z]{3}\d+@vitstudent\.ac\.in/,  college: 'VIT University',    shortName: 'VIT',       extractYear: m => 2000 + parseInt(m[1]), duration: 4 },
@@ -177,12 +169,7 @@ function detectFromEmail(email) {
       const now         = new Date()
       const academicYr  = now.getMonth() + 1 >= 7 ? now.getFullYear() : now.getFullYear() - 1
       const yearOfStudy = academicYr - joinYear + 1
-      return {
-        college: c.college, shortName: c.shortName, joinYear,
-        yearOfStudy: Math.min(Math.max(yearOfStudy, 1), c.duration),
-        graduationYear: joinYear + c.duration,
-        isValid: yearOfStudy >= 1 && yearOfStudy <= c.duration,
-      }
+      return { college: c.college, shortName: c.shortName, joinYear, yearOfStudy: Math.min(Math.max(yearOfStudy, 1), c.duration), graduationYear: joinYear + c.duration, isValid: yearOfStudy >= 1 && yearOfStudy <= c.duration }
     }
   }
   return null
@@ -190,6 +177,7 @@ function detectFromEmail(email) {
 
 const YEAR_SUFFIX = { 1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th' }
 
+// ─── Signup Page ──────────────────────────────────────────────────────────────
 export default function Signup() {
   const [form, setForm] = useState({
     name: '', email: '', password: '',
@@ -198,35 +186,23 @@ export default function Signup() {
     club_name: '',
     company_name: '', recruiter_name: '', hiring_process: '', salary_range: '',
     join_year: '', year_of_study: '', graduation_year: '',
-    // manual college fields (shown when email doesn't auto-detect)
     manual_join_year: '', manual_duration: '4',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [emailInfo, setEmailInfo] = useState(null)   // detected college info
+  const [emailInfo, setEmailInfo] = useState(null)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target
-
-    // Run email detection live
     if (name === 'email') {
       const detected = detectFromEmail(value)
       setEmailInfo(detected)
       if (detected) {
-        setForm(prev => ({
-          ...prev,
-          email: value,
-          college: detected.college,
-          join_year: detected.joinYear,
-          year_of_study: detected.yearOfStudy,
-          graduation_year: detected.graduationYear,
-        }))
+        setForm(prev => ({ ...prev, email: value, college: detected.college, join_year: detected.joinYear, year_of_study: detected.yearOfStudy, graduation_year: detected.graduationYear }))
         return
       }
     }
-
-    // Manual join year / duration → recalculate year_of_study + graduation_year
     if (name === 'manual_join_year' || name === 'manual_duration') {
       setForm(prev => {
         const jy  = name === 'manual_join_year' ? parseInt(value) : parseInt(prev.manual_join_year)
@@ -234,267 +210,206 @@ export default function Signup() {
         const now = new Date()
         const acYr = now.getMonth() + 1 >= 7 ? now.getFullYear() : now.getFullYear() - 1
         const yos  = jy ? Math.min(Math.max(acYr - jy + 1, 1), dur) : ''
-        return {
-          ...prev,
-          [name]: value,
-          join_year: jy || '',
-          year_of_study: yos,
-          graduation_year: jy ? jy + dur : '',
-        }
+        return { ...prev, [name]: value, join_year: jy || '', year_of_study: yos, graduation_year: jy ? jy + dur : '' }
       })
       return
     }
-
-    setForm(prev => ({
-      ...prev,
-      [name]: value,
-      ...(name === 'branch' ? { department: '' } : {})
-    }))
+    setForm(prev => ({ ...prev, [name]: value, ...(name === 'branch' ? { department: '' } : {}) }))
   }
 
   const handleSignup = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setError('')
+    setLoading(true); setError('')
     try {
       await API.post('/auth/signup', form)
       navigate('/login')
     } catch (err) {
       setError(err.response?.data?.detail || 'Signup failed!')
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
   const role = form.role
 
   return (
-    <div style={S.root}>
-      <div style={S.bg1} /><div style={S.bg2} /><div style={S.bg3} />
+    <div style={{ minHeight: '100vh', background: '#0d0d1a', fontFamily: "'Inter', sans-serif", position: 'relative', overflowX: 'hidden' }}>
+      <style>{`* { box-sizing: border-box; } input:focus, select:focus { border-color: #7c5cbf !important; box-shadow: 0 0 0 3px rgba(124,92,191,0.15) !important; outline: none !important; }`}</style>
 
-      <div style={S.wrapper}>
-        <div style={S.leftPanel}>
-          <div style={S.brand}>
-            <span style={S.brandUni}>Uni</span>
-            <span style={S.brandLink}>Link</span>
-          </div>
-          <h2 style={S.leftTitle}>Your college universe starts here</h2>
-          <p style={S.leftDesc}>Events, doubts, opportunities — all personalized for your branch and interests.</p>
-          <div style={S.features}>
-            {[
-              { icon: '📅', text: 'Branch-specific event recommendations' },
-              { icon: '💬', text: 'Peer-to-peer doubt solving' },
-              { icon: '💼', text: 'Curated internship opportunities' },
-              { icon: '🎓', text: 'Built for SRM students' },
-            ].map(f => (
-              <div key={f.text} style={S.feature}>
-                <span style={S.featureIcon}>{f.icon}</span>
-                <span style={S.featureText}>{f.text}</span>
-              </div>
-            ))}
-          </div>
+      <StarCanvas />
+
+      {/* Purple glow */}
+      <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '80vw', height: '80vh', background: 'radial-gradient(ellipse at center, rgba(124,92,191,0.12) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+
+      {/* Floating Navbar */}
+      <div style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 100, width: '100%', maxWidth: 840, padding: '0 24px' }}>
+        <div style={{ background: 'rgba(13,13,26,0.8)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 50, padding: '12px 24px', display: 'flex', alignItems: 'center' }}>
+          <span onClick={() => navigate('/')} style={{ fontFamily: 'Syne,sans-serif', fontWeight: 800, fontSize: 18, color: 'white', letterSpacing: -0.5, cursor: 'pointer' }}>UniLink</span>
         </div>
+      </div>
 
-        <div style={S.card}>
-          <div style={S.cardGlow} />
-          <h1 style={S.title}>Create Account</h1>
-          <p style={S.subtitle}>Join thousands of students on UniLink</p>
+      {/* Scrollable card area */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minHeight: '100vh', padding: '96px 24px 60px', position: 'relative', zIndex: 1 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+          style={{ width: '100%', maxWidth: 600 }}
+        >
+          <div style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, padding: '48px 44px' }}>
 
-          {error && <div style={S.error}>{error}</div>}
+            <h2 style={{ fontFamily: 'Syne,sans-serif', fontSize: 32, fontWeight: 800, color: 'white', margin: '0 0 8px' }}>Create your account</h2>
+            <p style={{ color: '#666', fontSize: 14, margin: '0 0 32px' }}>Join UniLink and connect with your campus</p>
 
-          <form onSubmit={handleSignup} style={S.form}>
+            {error && <div style={S.error}>{error}</div>}
 
-            {/* ROLE — always first */}
-            <div style={S.inputGroup}>
-              <label style={S.label}>I am a</label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                {ROLES.map(r => (
-                  <button
-                    key={r} type="button"
-                    onClick={() => handleChange({ target: { name: 'role', value: r } })}
-                    style={{
-                      padding: '10px 14px', borderRadius: 12, border: `1px solid ${role === r ? 'rgba(167,139,250,0.6)' : 'rgba(255,255,255,0.1)'}`,
-                      background: role === r ? 'rgba(167,139,250,0.18)' : '#1a1035',
-                      color: role === r ? '#a78bfa' : 'rgba(255,255,255,0.5)',
-                      fontSize: 13, fontWeight: role === r ? 700 : 400,
-                      fontFamily: 'Inter, sans-serif', cursor: 'pointer', textAlign: 'left',
-                      transition: 'all 0.15s',
-                    }}
-                  >{ROLE_LABELS[r]}</button>
-                ))}
-              </div>
-            </div>
+            <form onSubmit={handleSignup} style={S.form}>
 
-            {/* Name + Email */}
-            <div style={S.row}>
+              {/* ROLE */}
               <div style={S.inputGroup}>
-                <label style={S.label}>Full Name</label>
-                <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
-              </div>
-              <div style={S.inputGroup}>
-                <label style={S.label}>College Email</label>
-                <input name="email" type="email" placeholder="ra2211003@srmist.edu.in" value={form.email} onChange={handleChange} style={S.input} required />
-              </div>
-            </div>
-
-            {/* Smart email detection result */}
-            {form.email && emailInfo && emailInfo.isValid && (
-              <div style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.3)', borderRadius: 14, padding: '14px 18px', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-                <span style={{ color: '#34d399', fontSize: 13, fontWeight: 700 }}>✅ {emailInfo.shortName} detected</span>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>📅 Joined: {emailInfo.joinYear}</span>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>📚 {emailInfo.yearOfStudy}{YEAR_SUFFIX[emailInfo.yearOfStudy] || 'th'} Year</span>
-                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>🎓 Graduating: {emailInfo.graduationYear}</span>
-              </div>
-            )}
-
-            {/* Manual college inputs (shown only when email doesn't auto-detect) */}
-            {!emailInfo && (
-              <>
-                <div style={S.inputGroup}>
-                  <label style={S.label}>College Name</label>
-                  <input name="college" placeholder="Your college name" value={form.college} onChange={handleChange} style={S.input} required />
+                <label style={S.label}>I AM A</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {ROLES.map(r => (
+                    <button key={r} type="button" onClick={() => handleChange({ target: { name: 'role', value: r } })}
+                      style={{ padding: '10px 14px', borderRadius: 10, border: `1px solid ${role === r ? 'rgba(124,92,191,0.6)' : 'rgba(255,255,255,0.1)'}`, background: role === r ? 'rgba(124,92,191,0.18)' : 'rgba(255,255,255,0.03)', color: role === r ? '#a78bfa' : 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: role === r ? 700 : 400, fontFamily: 'Inter, sans-serif', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
+                    >{ROLE_LABELS[r]}</button>
+                  ))}
                 </div>
-                {role === 'student' && (
-                  <div style={S.row}>
-                    <div style={S.inputGroup}>
-                      <label style={S.label}>Join Year</label>
-                      <CustomSelect name="manual_join_year" value={form.manual_join_year ? String(form.manual_join_year) : ''}
-                        onChange={handleChange}
-                        options={['2018','2019','2020','2021','2022','2023','2024','2025','2026']}
-                        placeholder="Year you joined" />
-                    </div>
-                    <div style={S.inputGroup}>
-                      <label style={S.label}>Course Duration</label>
-                      <CustomSelect name="manual_duration" value={form.manual_duration}
-                        onChange={handleChange}
-                        options={['2','3','4','5']}
-                        placeholder="Years" />
-                    </div>
-                  </div>
-                )}
-                {form.join_year && form.graduation_year && (
-                  <div style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)', borderRadius: 12, padding: '10px 16px', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                    <span style={{ color: '#a78bfa', fontSize: 12 }}>📚 Year {form.year_of_study} of {form.manual_duration}</span>
-                    <span style={{ color: '#a78bfa', fontSize: 12 }}>🎓 Graduating: {form.graduation_year}</span>
-                  </div>
-                )}
-              </>
-            )}
+              </div>
 
-            <div style={S.inputGroup}>
-              <label style={S.label}>Password</label>
-              <input name="password" type="password" placeholder="Min 6 characters" value={form.password} onChange={handleChange} style={S.input} required />
-            </div>
-
-            {/* STUDENT fields */}
-            {role === 'student' && (
+              {/* Name + Email */}
               <div style={S.row}>
                 <div style={S.inputGroup}>
-                  <label style={S.label}>Branch / Specialization</label>
-                  <CustomSelect name="branch" value={form.branch} onChange={handleChange} options={BRANCHES} placeholder="Select Branch" />
+                  <label style={S.label}>FULL NAME</label>
+                  <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
                 </div>
                 <div style={S.inputGroup}>
-                  <label style={S.label}>Domain</label>
-                  <CustomSelect name="department" value={form.department} onChange={handleChange} options={DEPARTMENTS[form.branch] || []} placeholder="Select Domain" disabled={!form.branch} />
+                  <label style={S.label}>COLLEGE EMAIL</label>
+                  <input name="email" type="email" placeholder="ra2211003@srmist.edu.in" value={form.email} onChange={handleChange} style={S.input} required />
                 </div>
               </div>
-            )}
 
-            {/* FACULTY fields */}
-            {role === 'faculty' && (
+              {/* Smart email detection */}
+              {form.email && emailInfo && emailInfo.isValid && (
+                <div style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.3)', borderRadius: 12, padding: '14px 18px', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+                  <span style={{ color: '#34d399', fontSize: 13, fontWeight: 700 }}>✅ {emailInfo.shortName} detected</span>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>📅 Joined: {emailInfo.joinYear}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>📚 {emailInfo.yearOfStudy}{YEAR_SUFFIX[emailInfo.yearOfStudy] || 'th'} Year</span>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>🎓 Graduating: {emailInfo.graduationYear}</span>
+                </div>
+              )}
+
+              {/* Manual college inputs */}
+              {!emailInfo && (
+                <>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>COLLEGE NAME</label>
+                    <input name="college" placeholder="Your college name" value={form.college} onChange={handleChange} style={S.input} required />
+                  </div>
+                  {role === 'student' && (
+                    <div style={S.row}>
+                      <div style={S.inputGroup}>
+                        <label style={S.label}>JOIN YEAR</label>
+                        <CustomSelect name="manual_join_year" value={form.manual_join_year ? String(form.manual_join_year) : ''} onChange={handleChange} options={['2018','2019','2020','2021','2022','2023','2024','2025','2026']} placeholder="Year you joined" />
+                      </div>
+                      <div style={S.inputGroup}>
+                        <label style={S.label}>COURSE DURATION</label>
+                        <CustomSelect name="manual_duration" value={form.manual_duration} onChange={handleChange} options={['2','3','4','5']} placeholder="Years" />
+                      </div>
+                    </div>
+                  )}
+                  {form.join_year && form.graduation_year && (
+                    <div style={{ background: 'rgba(124,92,191,0.08)', border: '1px solid rgba(124,92,191,0.2)', borderRadius: 10, padding: '10px 16px', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                      <span style={{ color: '#a78bfa', fontSize: 12 }}>📚 Year {form.year_of_study} of {form.manual_duration}</span>
+                      <span style={{ color: '#a78bfa', fontSize: 12 }}>🎓 Graduating: {form.graduation_year}</span>
+                    </div>
+                  )}
+                </>
+              )}
+
               <div style={S.inputGroup}>
-                <label style={S.label}>Department</label>
-                <CustomSelect name="faculty_department" value={form.faculty_department} onChange={handleChange}
-                  options={['Computer Science & Engineering','Information Technology','Electronics & Communication','Electrical Engineering','Mechanical Engineering','Civil Engineering','Biotechnology','Physics','Chemistry','Mathematics','Management Studies','Law','Architecture','Medical Sciences','Other']}
-                  placeholder="Select Department" />
+                <label style={S.label}>PASSWORD</label>
+                <input name="password" type="password" placeholder="Min 6 characters" value={form.password} onChange={handleChange} style={S.input} required />
               </div>
-            )}
 
-            {/* CLUB fields */}
-            {role === 'club' && (
-              <div style={S.inputGroup}>
-                <label style={S.label}>Club Name</label>
-                <input name="club_name" placeholder="e.g. IEEE Student Branch, Coding Club" value={form.club_name} onChange={handleChange} style={S.input} required />
-              </div>
-            )}
-
-            {/* COMPANY fields */}
-            {role === 'company' && (
-              <>
+              {/* STUDENT fields */}
+              {role === 'student' && (
                 <div style={S.row}>
                   <div style={S.inputGroup}>
-                    <label style={S.label}>Company Name</label>
-                    <input name="company_name" placeholder="e.g. Google India" value={form.company_name} onChange={handleChange} style={S.input} required />
+                    <label style={S.label}>BRANCH / SPECIALIZATION</label>
+                    <CustomSelect name="branch" value={form.branch} onChange={handleChange} options={BRANCHES} placeholder="Select Branch" />
                   </div>
                   <div style={S.inputGroup}>
-                    <label style={S.label}>Recruiter Name</label>
-                    <input name="recruiter_name" placeholder="Your name" value={form.recruiter_name} onChange={handleChange} style={S.input} required />
+                    <label style={S.label}>DOMAIN</label>
+                    <CustomSelect name="department" value={form.department} onChange={handleChange} options={DEPARTMENTS[form.branch] || []} placeholder="Select Domain" disabled={!form.branch} />
                   </div>
                 </div>
-                <div style={S.row}>
-                  <div style={S.inputGroup}>
-                    <label style={S.label}>Hiring Process</label>
-                    <CustomSelect name="hiring_process" value={form.hiring_process} onChange={handleChange}
-                      options={['On-Campus', 'Off-Campus', 'Both']} placeholder="Select Hiring Mode" />
-                  </div>
-                  <div style={S.inputGroup}>
-                    <label style={S.label}>Stipend / Salary Range</label>
-                    <input name="salary_range" placeholder="e.g. ₹20,000/mo or ₹8–12 LPA" value={form.salary_range} onChange={handleChange} style={S.input} />
-                  </div>
+              )}
+
+              {/* FACULTY fields */}
+              {role === 'faculty' && (
+                <div style={S.inputGroup}>
+                  <label style={S.label}>DEPARTMENT</label>
+                  <CustomSelect name="faculty_department" value={form.faculty_department} onChange={handleChange}
+                    options={['Computer Science & Engineering','Information Technology','Electronics & Communication','Electrical Engineering','Mechanical Engineering','Civil Engineering','Biotechnology','Physics','Chemistry','Mathematics','Management Studies','Law','Architecture','Medical Sciences','Other']}
+                    placeholder="Select Department" />
                 </div>
-              </>
-            )}
+              )}
 
-            <button type="submit" style={loading ? S.btnDisabled : S.btn} disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account →'}
-            </button>
-          </form>
+              {/* CLUB fields */}
+              {role === 'club' && (
+                <div style={S.inputGroup}>
+                  <label style={S.label}>CLUB NAME</label>
+                  <input name="club_name" placeholder="e.g. IEEE Student Branch, Coding Club" value={form.club_name} onChange={handleChange} style={S.input} required />
+                </div>
+              )}
 
-          <p style={S.switchText}>
-            Already have an account?{' '}
-            <Link to="/login" style={S.switchLink}>Sign in</Link>
-          </p>
-        </div>
+              {/* COMPANY fields */}
+              {role === 'company' && (
+                <>
+                  <div style={S.row}>
+                    <div style={S.inputGroup}>
+                      <label style={S.label}>COMPANY NAME</label>
+                      <input name="company_name" placeholder="e.g. Google India" value={form.company_name} onChange={handleChange} style={S.input} required />
+                    </div>
+                    <div style={S.inputGroup}>
+                      <label style={S.label}>RECRUITER NAME</label>
+                      <input name="recruiter_name" placeholder="Your name" value={form.recruiter_name} onChange={handleChange} style={S.input} required />
+                    </div>
+                  </div>
+                  <div style={S.row}>
+                    <div style={S.inputGroup}>
+                      <label style={S.label}>HIRING PROCESS</label>
+                      <CustomSelect name="hiring_process" value={form.hiring_process} onChange={handleChange} options={['On-Campus', 'Off-Campus', 'Both']} placeholder="Select Hiring Mode" />
+                    </div>
+                    <div style={S.inputGroup}>
+                      <label style={S.label}>STIPEND / SALARY RANGE</label>
+                      <input name="salary_range" placeholder="e.g. ₹20,000/mo or ₹8–12 LPA" value={form.salary_range} onChange={handleChange} style={S.input} />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <button type="submit" disabled={loading} style={loading ? S.btnDisabled : S.btn}>
+                {loading ? 'Creating account...' : 'Create Account →'}
+              </button>
+            </form>
+
+            <p style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: '#666', marginBottom: 0 }}>
+              Already have an account?{' '}
+              <Link to="/login" style={{ color: '#7c5cbf', textDecoration: 'none', fontWeight: 600 }}>Sign in →</Link>
+            </p>
+          </div>
+        </motion.div>
       </div>
     </div>
   )
 }
 
-const glass = {
-  background: 'rgba(255,255,255,0.04)',
-  backdropFilter: 'blur(24px)',
-  WebkitBackdropFilter: 'blur(24px)',
-  border: '1px solid rgba(255,255,255,0.08)',
-}
-
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const S = {
-  root: { minHeight: '100vh', background: 'linear-gradient(160deg, #050510 0%, #0d0820 40%, #060315 100%)', fontFamily: "'Inter', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', position: 'relative', overflow: 'hidden' },
-  bg1: { position: 'fixed', top: '-20%', left: '-10%', width: '60vw', height: '60vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 65%)', pointerEvents: 'none' },
-  bg2: { position: 'fixed', top: '30%', right: '-15%', width: '50vw', height: '50vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 65%)', pointerEvents: 'none' },
-  bg3: { position: 'fixed', bottom: '-10%', left: '25%', width: '40vw', height: '40vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%)', pointerEvents: 'none' },
-  wrapper: { display: 'flex', gap: 48, alignItems: 'center', maxWidth: 1100, width: '100%', position: 'relative', zIndex: 1 },
-  leftPanel: { flex: 1, padding: '0 24px' },
-  brand: { display: 'flex', marginBottom: 32 },
-  brandUni: { fontFamily: 'Syne, sans-serif', fontSize: 40, fontWeight: 800, color: 'white', letterSpacing: -1 },
-  brandLink: { fontFamily: 'Syne, sans-serif', fontSize: 40, fontWeight: 800, background: 'linear-gradient(90deg, #a78bfa, #67e8f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: -1 },
-  leftTitle: { fontFamily: 'Syne, sans-serif', fontSize: 32, fontWeight: 800, color: 'white', lineHeight: 1.3, marginBottom: 16 },
-  leftDesc: { color: 'rgba(255,255,255,0.4)', fontSize: 15, lineHeight: 1.8, marginBottom: 40 },
-  features: { display: 'flex', flexDirection: 'column', gap: 20 },
-  feature: { display: 'flex', alignItems: 'center', gap: 16 },
-  featureIcon: { fontSize: 24, width: 44, height: 44, borderRadius: 12, background: 'rgba(167,139,250,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  featureText: { color: 'rgba(255,255,255,0.6)', fontSize: 14 },
-  card: { ...glass, borderRadius: 28, padding: '48px 44px', width: '100%', maxWidth: 560, position: 'relative', overflow: 'visible', boxShadow: '0 40px 80px rgba(0,0,0,0.5)' },
-  cardGlow: { position: 'absolute', top: -80, right: -80, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 60%)', pointerEvents: 'none' },
-  title: { fontFamily: 'Syne, sans-serif', fontSize: 28, fontWeight: 800, color: 'white', marginBottom: 8 },
-  subtitle: { color: 'rgba(255,255,255,0.35)', fontSize: 14, marginBottom: 32 },
-  error: { background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.3)', color: '#fb7185', padding: '12px 16px', borderRadius: 12, marginBottom: 20, fontSize: 14 },
-  form: { display: 'flex', flexDirection: 'column', gap: 20 },
-  row: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 },
+  label:      { fontSize: 12, color: '#888', letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 500, marginBottom: 0 },
+  input:      { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '12px 16px', color: 'white', fontSize: 14, fontFamily: 'Inter, sans-serif', outline: 'none', width: '100%', transition: 'border-color 0.2s, box-shadow 0.2s' },
+  btn:        { background: '#7c5cbf', color: 'white', padding: '14px', borderRadius: 12, border: 'none', fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: "'Inter',sans-serif", width: '100%', marginTop: 8, transition: 'background 0.2s' },
+  btnDisabled:{ background: 'rgba(124,92,191,0.35)', color: 'rgba(255,255,255,0.4)', padding: '14px', borderRadius: 12, border: 'none', fontSize: 15, fontWeight: 600, cursor: 'not-allowed', fontFamily: "'Inter',sans-serif", width: '100%', marginTop: 8 },
+  error:      { background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.3)', color: '#fb7185', padding: '12px 16px', borderRadius: 10, marginBottom: 20, fontSize: 14 },
+  form:       { display: 'flex', flexDirection: 'column', gap: 20 },
+  row:        { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 },
   inputGroup: { display: 'flex', flexDirection: 'column', gap: 8 },
-  label: { fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'Syne, sans-serif' },
-  input: { background: '#1a1035', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '12px 16px', color: 'white', fontSize: 14, fontFamily: 'Inter, sans-serif', outline: 'none' },
-  btn: { background: 'linear-gradient(135deg, #7c3aed, #a78bfa)', color: 'white', padding: '14px', borderRadius: 14, border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', fontFamily: 'Syne, sans-serif', boxShadow: '0 8px 32px rgba(124,58,237,0.4)', marginTop: 8 },
-  btnDisabled: { background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)', padding: '14px', borderRadius: 14, border: 'none', fontSize: 16, fontWeight: 700, cursor: 'not-allowed', fontFamily: 'Syne, sans-serif', marginTop: 8 },
-  switchText: { textAlign: 'center', marginTop: 24, fontSize: 14, color: 'rgba(255,255,255,0.3)' },
-  switchLink: { color: '#a78bfa', textDecoration: 'none', fontWeight: 600 },
 }

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from backend.models.event import EventCreate, EventUpdate
-from backend.middleware.auth_middleware import get_current_user, require_role
-from backend.database import db
+from models.event import EventCreate, EventUpdate
+from middleware.auth_middleware import get_current_user, require_role
+from database import db
 from datetime import datetime
 from typing import Optional
 

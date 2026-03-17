@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from backend.models.user import SignupRequest, LoginRequest
-from backend.services.auth_service import hash_password, verify_password, create_access_token
-from backend.services.email_service import send_otp_email
-from backend.middleware.auth_middleware import get_current_user
-from backend.database import db
+from models.user import SignupRequest, LoginRequest
+from services.auth_service import hash_password, verify_password, create_access_token
+from services.email_service import send_otp_email
+from middleware.auth_middleware import get_current_user
+from database import db
 import random
 from datetime import datetime, timedelta, timezone
 
@@ -61,20 +61,36 @@ async def signup(user: SignupRequest):
 # LOGIN ROUTE - no token needed
 @router.post("/login")
 async def login(credentials: LoginRequest):
-    
+
+    print(f"[LOGIN] Attempting login for email: {credentials.email}")
+
     # Find user by email in Firestore
     users = db.collection("users").where("email", "==", credentials.email).get()
 
+    print(f"[LOGIN] Users found in Firestore: {len(users)}")
+
     if not users:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        print(f"[LOGIN] No user found for email: {credentials.email}")
+        raise HTTPException(status_code=401, detail="User not found")
 
     # Get the matching user document
     user_doc = users[0]
     user_data = user_doc.to_dict()
 
-    # Check if password is correct
-    if not verify_password(credentials.password, user_data["password"]):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    stored_password = user_data.get("password", "")
+    print(f"[LOGIN] User doc ID: {user_doc.id}, password field starts with: '{stored_password[:10]}...'")
+
+    # Handle both bcrypt-hashed and plain-text passwords
+    is_bcrypt = stored_password.startswith("$2b$") or stored_password.startswith("$2a$")
+    if is_bcrypt:
+        password_ok = verify_password(credentials.password, stored_password)
+    else:
+        password_ok = (credentials.password == stored_password)
+
+    print(f"[LOGIN] is_bcrypt={is_bcrypt}, password_ok={password_ok}")
+
+    if not password_ok:
+        raise HTTPException(status_code=401, detail="Incorrect password")
 
     # Create JWT token with user info inside
     token = create_access_token({

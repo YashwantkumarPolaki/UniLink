@@ -1,12 +1,18 @@
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from backend.config import SMTP_EMAIL, SMTP_PASSWORD
 
 
 def send_otp_email(to_email: str, otp: str):
+    smtp_email = os.getenv("SMTP_EMAIL", "")
+    smtp_password = os.getenv("SMTP_PASSWORD", "")
+
+    if not smtp_email or not smtp_password:
+        raise Exception("SMTP_EMAIL and SMTP_PASSWORD must be set in .env")
+
     msg = MIMEMultipart()
-    msg["From"] = SMTP_EMAIL
+    msg["From"] = smtp_email
     msg["To"] = to_email
     msg["Subject"] = "UniLink - Password Reset OTP"
 
@@ -25,6 +31,10 @@ def send_otp_email(to_email: str, otp: str):
 
     msg.attach(MIMEText(body, "html"))
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(SMTP_EMAIL, SMTP_PASSWORD)
-        server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(smtp_email, smtp_password)
+            server.sendmail(smtp_email, to_email, msg.as_string())
+    except Exception as e:
+        print(f"[EMAIL ERROR] {e}")
+        raise Exception(f"Failed to send email: {str(e)}")

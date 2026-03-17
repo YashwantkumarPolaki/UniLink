@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
-from backend.config import SECRET_KEY, ALGORITHM
+from config import SECRET_KEY, ALGORITHM
 
 # HTTPBearer reads the token from request header automatically
 security = HTTPBearer()

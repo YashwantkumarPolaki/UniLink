@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.models.opportunity import CreateOpportunityRequest, UpdateOpportunityRequest
-from backend.middleware.auth_middleware import get_current_user, require_role
-from backend.database import db
+from models.opportunity import CreateOpportunityRequest, UpdateOpportunityRequest
+from middleware.auth_middleware import get_current_user, require_role
+from database import db
 
 # All routes here start with /opportunities
 router = APIRouter(prefix="/opportunities", tags=["Opportunities"])
