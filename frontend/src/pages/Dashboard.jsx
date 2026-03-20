@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import API from '../api'
 import Navbar from '../components/Navbar'
+import ExamCountdown from '../components/ExamCountdown'
+import usePushNotifications from '../hooks/usePushNotifications'
 
 function StarField() {
   const canvasRef = useRef(null)
@@ -96,12 +98,21 @@ export default function Dashboard() {
   const [doubts, setDoubts] = useState([])
   const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)])
   const navigate = useNavigate()
+  const { isSubscribed, isSupported, requestPermission } = usePushNotifications()
+  const [notifAsked, setNotifAsked] = useState(false)
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
     if (!userData) { navigate('/login'); return }
     setUser(JSON.parse(userData))
     setTimeout(() => setAnimated(true), 200)
+    // Prompt for push notifications once
+    setTimeout(() => {
+      if (isSupported && !isSubscribed && !notifAsked) {
+        setNotifAsked(true)
+        requestPermission()
+      }
+    }, 3000)
   }, [])
 
   useEffect(() => {
@@ -116,6 +127,7 @@ export default function Dashboard() {
     { icon: '📅', title: 'Events', desc: 'Discover & join events at your college', color: '#818cf8', glow: 'rgba(129,140,248,0.5)', path: '/events', tag: 'EXPLORE' },
     { icon: '💬', title: 'Doubts', desc: 'Ask questions, get answers from peers', color: '#f472b6', glow: 'rgba(244,114,182,0.5)', path: '/doubts', tag: 'ASK' },
     { icon: '💼', title: 'Opportunities', desc: 'Internships, jobs & more curated for you', color: '#34d399', glow: 'rgba(52,211,153,0.5)', path: '/opportunities', tag: 'GROW' },
+    { icon: '🔍', title: 'Lost & Found', desc: 'Lost something? Found something? Post it!', color: '#fb7185', glow: 'rgba(251,113,133,0.5)', path: '/lost-found', tag: 'CAMPUS' },
   ]
 
   const activity = [
@@ -327,6 +339,12 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* EXAM COUNTDOWN */}
+        <SectionHeader label="EXAM SCHEDULE" animated={animated} delay={0.9} />
+        <div style={{ marginBottom: 40, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(40px)', transition: 'all 0.8s ease 0.95s' }}>
+          <ExamCountdown />
+        </div>
+
         {/* FOOTER */}
         <div style={S.footer}>
           <span style={S.footerText}>UniLink © 2026 · Built with ❤️ for college students</span>
@@ -395,7 +413,7 @@ const S = {
   quoteAuthor: { color: '#a78bfa', fontSize: 13, fontWeight: 600, flexShrink: 0 },
 
   // Cards
-  cardsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginBottom: 40 },
+  cardsGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 40 },
   card: { ...glass, borderRadius: 24, padding: '36px 32px', display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' },
   cardShine: { position: 'absolute', top: 0, right: 0, width: '100%', height: '100%', pointerEvents: 'none' },
   cardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' },

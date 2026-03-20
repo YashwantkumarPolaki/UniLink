@@ -5,6 +5,15 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Literal, List, Optional
 from middleware.auth_middleware import get_current_user
+from fastapi import APIRouter
+from services.gemini_service import ask_ai
+
+router = APIRouter()
+
+@router.post("/ask")
+async def ask(question: dict):
+    answer = ask_ai(question["question"])
+    return {"answer": answer}
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -84,7 +93,7 @@ async def call_claude(prompt: str, max_tokens: int = 800, system: str = None,
 async def call_gemini(prompt: str) -> str:
     if not GEMINI_KEY:
         raise HTTPException(400, "GEMINI_API_KEY not set in .env")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
     async with httpx.AsyncClient(timeout=30) as client:
         res = await client.post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
     data = res.json()

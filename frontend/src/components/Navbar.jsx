@@ -50,10 +50,10 @@ export default function Navbar() {
       fontFamily: "'Inter', sans-serif",
     }}>
       {/* Logo */}
-      <div style={{ display: 'flex', cursor: 'pointer', alignItems: 'center' }}
+      <div style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: '8px' }}
            onClick={() => navigate('/dashboard')}>
-        <span style={{ fontFamily: 'Syne,sans-serif', fontSize: 22, fontWeight: 800, color: 'white' }}>Uni</span>
-        <span style={{ fontFamily: 'Syne,sans-serif', fontSize: 22, fontWeight: 800, background: 'linear-gradient(90deg,#a78bfa,#67e8f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Link</span>
+        <img src="/logo.svg" alt="UniLink" style={{ width: '40px', height: '34px' }} />
+        <span style={{ color: 'white', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '22px', letterSpacing: '0.5px' }}>UniLink</span>
       </div>
 
       {/* Nav links */}

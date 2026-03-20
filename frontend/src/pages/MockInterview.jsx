@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import API from '../api'
 import Navbar from '../components/Navbar'
-import { askGemini } from '../services/geminiService'
+import { askAI } from '../services/aiService'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ROUNDS = ['Technical Round 1', 'Technical Round 2', 'HR Round', 'Managerial Round', 'System Design Round']
@@ -130,11 +130,10 @@ function SetupScreen({ onStart }) {
 
 // ─── Interview Screen ─────────────────────────────────────────────────────────
 function InterviewScreen({ config, onComplete }) {
-  const [history, setHistory] = useState([])      // Gemini format: [{role, parts}]
   const [currentQ, setCurrentQ] = useState('')
   const [answer, setAnswer] = useState('')
   const [loading, setLoading] = useState(false)
-  const [qNum, setQNum] = useState(0)             // 0 = loading first Q, 1-5 = active
+  const [qNum, setQNum] = useState(1)             // 1-5 = active question number
   const [error, setError] = useState('')
   const [timeLeft, setTimeLeft] = useState(config.timer ? 180 : null)
   const [submitting, setSubmitting] = useState(false)
@@ -174,13 +173,8 @@ Start by asking Question 1 now. Do not introduce yourself, go straight to the qu
     setLoading(true)
     setError('')
     try {
-      let newHistory = isFirst ? [] : [
-        ...history,
-        { role: 'user', parts: [{ text: userAnswer }] },
-      ]
-
-      const prompt = isFirst ? systemPrompt : userAnswer
-      const reply = await askGemini(prompt, newHistory)
+      const prompt = isFirst ? 'Begin the interview. Ask Question 1 now.' : userAnswer
+      const reply = await askAI(prompt, systemPrompt)
 
       // Detect JSON report (interview complete)
       const jsonStart = reply.indexOf('{')
@@ -193,13 +187,8 @@ Start by asking Question 1 now. Do not introduce yourself, go straight to the qu
         } catch { /* not valid JSON yet, treat as regular response */ }
       }
 
-      const updatedHistory = [
-        ...newHistory,
-        { role: 'model', parts: [{ text: reply }] },
-      ]
-      setHistory(updatedHistory)
       setCurrentQ(reply)
-      setQNum(prev => prev + 1)
+      if (!isFirst) setQNum(prev => prev + 1)
       resetTimer()
       setAnswer('')
     } catch (err) {
@@ -230,7 +219,7 @@ Start by asking Question 1 now. Do not introduce yourself, go straight to the qu
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
-            {loading && qNum === 0 ? 'Loading...' : `Question ${displayQ} of 5`}
+            {loading && !currentQ ? 'Loading...' : `Question ${displayQ} of 5`}
           </span>
           <span style={{ fontSize: 13, color: '#a78bfa', fontWeight: 600 }}>
             {config.company} · {config.role} · {config.round}
@@ -245,7 +234,7 @@ Start by asking Question 1 now. Do not introduce yourself, go straight to the qu
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#a78bfa', letterSpacing: 2, textTransform: 'uppercase', fontFamily: 'Syne,sans-serif', marginBottom: 10 }}>
-              {qNum === 0 ? 'Starting...' : `Question ${displayQ}`}
+              {loading && !currentQ ? 'Starting...' : `Question ${displayQ}`}
             </div>
             {loading ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>

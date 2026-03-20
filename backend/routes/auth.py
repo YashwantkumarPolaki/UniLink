@@ -2,11 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from models.user import SignupRequest, LoginRequest
 from services.auth_service import hash_password, verify_password, create_access_token
-from services.email_service import send_otp_email
 from middleware.auth_middleware import get_current_user
 from database import db
-import random
-from datetime import datetime, timedelta, timezone
 
 
 class ChangePasswordRequest(BaseModel):
@@ -178,103 +175,3 @@ async def upload_avatar(
     return {"message": "Avatar updated", "avatar": body.avatar_base64}
 
 
-# ── Forgot Password models ────────────────────────────────────────────────────
-class ForgotPasswordRequest(BaseModel):
-    email: str
-
-class VerifyOtpRequest(BaseModel):
-    email: str
-    otp: str
-
-class ResetPasswordRequest(BaseModel):
-    email: str
-    otp: str
-    new_password: str
-
-
-# FORGOT PASSWORD — send OTP
-@router.post("/forgot-password")
-async def forgot_password(body: ForgotPasswordRequest):
-    users = db.collection("users").where("email", "==", body.email).get()
-    if not users:
-        raise HTTPException(404, "No account found with this email")
-
-    otp = str(random.randint(100000, 999999))
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
-
-    # Store OTP in Firestore (overwrite any existing)
-    existing = db.collection("otps").where("email", "==", body.email).get()
-    for doc in existing:
-        doc.reference.delete()
-
-    db.collection("otps").add({
-        "email": body.email,
-        "otp": otp,
-        "expires_at": expires_at,
-        "used": False,
-    })
-
-    try:
-        send_otp_email(body.email, otp)
-    except Exception as e:
-        raise HTTPException(500, f"Failed to send email: {str(e)}")
-
-    return {"message": "OTP sent"}
-
-
-# VERIFY OTP
-@router.post("/verify-otp")
-async def verify_otp(body: VerifyOtpRequest):
-    docs = db.collection("otps").where("email", "==", body.email).get()
-    if not docs:
-        raise HTTPException(400, "OTP not found. Please request a new one.")
-
-    otp_doc = docs[0].to_dict()
-
-    if otp_doc.get("used"):
-        raise HTTPException(400, "OTP already used")
-
-    expires_at = otp_doc.get("expires_at")
-    if expires_at and datetime.now(timezone.utc) > expires_at:
-        raise HTTPException(400, "OTP has expired. Please request a new one.")
-
-    if otp_doc.get("otp") != body.otp:
-        raise HTTPException(400, "Incorrect OTP")
-
-    return {"verified": True}
-
-
-# RESET PASSWORD
-@router.post("/reset-password")
-async def reset_password(body: ResetPasswordRequest):
-    if len(body.new_password) < 8:
-        raise HTTPException(400, "Password must be at least 8 characters")
-
-    docs = db.collection("otps").where("email", "==", body.email).get()
-    if not docs:
-        raise HTTPException(400, "OTP not found")
-
-    otp_ref = docs[0]
-    otp_doc = otp_ref.to_dict()
-
-    if otp_doc.get("used"):
-        raise HTTPException(400, "OTP already used")
-
-    expires_at = otp_doc.get("expires_at")
-    if expires_at and datetime.now(timezone.utc) > expires_at:
-        raise HTTPException(400, "OTP has expired")
-
-    if otp_doc.get("otp") != body.otp:
-        raise HTTPException(400, "Incorrect OTP")
-
-    # Update password
-    users = db.collection("users").where("email", "==", body.email).get()
-    if not users:
-        raise HTTPException(404, "User not found")
-
-    users[0].reference.update({"password": hash_password(body.new_password)})
-
-    # Mark OTP as used
-    otp_ref.reference.update({"used": True})
-
-    return {"message": "Password reset successful"}

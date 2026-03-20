@@ -1,9 +1,9 @@
-// ─── GEMINI AI CALL ───────────────────────────────────────────────────────────
-import { askGemini } from '../../services/geminiService'
+// ─── GEMINI 2.0 AI CALL ───────────────────────────────────────────────────────
+import { askAI } from '../../services/aiService'
 
 export async function callAI(prompt, _model = 'gemini') {
   try {
-    return await askGemini(prompt)
+    return await askAI(prompt)
   } catch (e) {
     throw new Error(e.message || 'AI unavailable. Please try again.')
   }

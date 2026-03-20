@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import db
-from routes import auth, events, doubts, opportunities, ai
+from routes import auth, events, doubts, opportunities, ai, lost_found, notifications
 
 # Create FastAPI app
 app = FastAPI(
@@ -30,6 +30,8 @@ app.include_router(events.router)
 app.include_router(doubts.router)
 app.include_router(opportunities.router)
 app.include_router(ai.router)
+app.include_router(lost_found.router)
+app.include_router(notifications.router)
 
 # Root route
 @app.get("/")
