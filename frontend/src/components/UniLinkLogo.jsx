@@ -1,0 +1,35 @@
+export default function UniLinkLogo() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <svg width="40" height="34" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navOg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ff9a5c"/>
+            <stop offset="100%" stopColor="#e8405a"/>
+          </linearGradient>
+          <linearGradient id="navPu" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a78bfa"/>
+            <stop offset="100%" stopColor="#4f8ef7"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(38,50) rotate(-20)">
+          <rect x="-28" y="-28" width="56" height="56" rx="11"
+            fill="none" stroke="url(#navOg)" strokeWidth="10"/>
+        </g>
+        <g transform="translate(72,44) rotate(15)">
+          <rect x="-28" y="-28" width="56" height="56" rx="11"
+            fill="none" stroke="url(#navPu)" strokeWidth="10"/>
+        </g>
+        <rect x="47" y="22" width="12" height="18" fill="#0d0d1a"/>
+        <rect x="47" y="58" width="12" height="16" fill="#0d0d1a"/>
+      </svg>
+      <span style={{
+        color: 'white',
+        fontFamily: 'Syne, sans-serif',
+        fontWeight: 800,
+        fontSize: '22px',
+        letterSpacing: '0.5px',
+      }}>UniLink</span>
+    </div>
+  )
+}

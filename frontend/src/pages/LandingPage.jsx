@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
+import UniLinkLogo from '../components/UniLinkLogo'
 
 // ─── Star Field Canvas ─────────────────────────────────────────────────────────
 function StarCanvas() {
@@ -209,10 +210,7 @@ export default function LandingPage() {
       {/* Floating Navbar */}
       <div style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 100, width: '100%', maxWidth: 840, padding: '0 24px' }}>
         <div style={{ background: 'rgba(13,13,26,0.8)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 50, padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src="/logo.svg" alt="UniLink" style={{ width: '40px', height: '34px' }} />
-            <span style={{ color: 'white', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '22px', letterSpacing: '0.5px' }}>UniLink</span>
-          </div>
+          <UniLinkLogo />
           <button onClick={() => navigate('/login')} style={{ background: '#7c5cbf', border: 'none', color: 'white', borderRadius: 50, padding: '8px 22px', fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: "'Inter',sans-serif" }}>Sign In</button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
+import UniLinkLogo from './UniLinkLogo'
 
 const NAV_ITEMS = {
   student: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Mock Interview'],
@@ -50,10 +51,8 @@ export default function Navbar() {
       fontFamily: "'Inter', sans-serif",
     }}>
       {/* Logo */}
-      <div style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: '8px' }}
-           onClick={() => navigate('/dashboard')}>
-        <img src="/logo.svg" alt="UniLink" style={{ width: '40px', height: '34px' }} />
-        <span style={{ color: 'white', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '22px', letterSpacing: '0.5px' }}>UniLink</span>
+      <div style={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+        <UniLinkLogo />
       </div>
 
       {/* Nav links */}

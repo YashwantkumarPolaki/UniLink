@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import API from '../api'
+import UniLinkLogo from '../components/UniLinkLogo'
 
 // ─── Star Field Canvas ─────────────────────────────────────────────────────────
 function StarCanvas() {
@@ -68,9 +69,8 @@ export default function Login() {
       {/* Floating Navbar */}
       <div style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 100, width: '100%', maxWidth: 840, padding: '0 24px' }}>
         <div style={{ background: 'rgba(13,13,26,0.8)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 50, padding: '12px 24px', display: 'flex', alignItems: 'center' }}>
-          <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-            <img src="/logo.svg" alt="UniLink" style={{ width: '40px', height: '34px' }} />
-            <span style={{ color: 'white', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '22px', letterSpacing: '0.5px' }}>UniLink</span>
+          <div onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+            <UniLinkLogo />
           </div>
         </div>
       </div>
