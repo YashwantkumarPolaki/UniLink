@@ -1,8 +1,10 @@
 fastapi
 uvicorn[standard]
-pymongo[srv]
+firebase-admin
 python-jose[cryptography]
 passlib[bcrypt]
 python-dotenv
 pydantic[email]
 mangum
+pywebpush
+httpx

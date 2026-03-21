@@ -5,21 +5,13 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Literal, List, Optional
 from middleware.auth_middleware import get_current_user
-from fastapi import APIRouter
-from services.gemini_service import ask_ai
-
-router = APIRouter()
-
-@router.post("/ask")
-async def ask(question: dict):
-    answer = ask_ai(question["question"])
-    return {"answer": answer}
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
 OPENAI_KEY    = os.getenv("OPENAI_API_KEY", "")
 ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_KEY    = os.getenv("GEMINI_API_KEY", "")
+
 
 
 class AskRequest(BaseModel):

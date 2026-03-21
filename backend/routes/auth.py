@@ -104,7 +104,16 @@ async def login(credentials: LoginRequest):
             "name": user_data["name"],
             "email": user_data["email"],
             "role": user_data["role"],
-            "college": user_data["college"]
+            "college": user_data.get("college", ""),
+            "branch": user_data.get("branch", ""),
+            "department": user_data.get("department", ""),
+            "faculty_department": user_data.get("faculty_department", ""),
+            "club_name": user_data.get("club_name", ""),
+            "company_name": user_data.get("company_name", ""),
+            "join_year": user_data.get("join_year"),
+            "year_of_study": user_data.get("year_of_study"),
+            "graduation_year": user_data.get("graduation_year"),
+            "avatar": user_data.get("avatar", ""),
         }
     }
 

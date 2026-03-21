@@ -1,6 +1,6 @@
 export async function askAI(prompt, systemPrompt = "") {
   const key = import.meta.env.VITE_GEMINI_KEY
-  if (!key) throw new Error('VITE_GEMINI_KEY is missing in frontend/.env — restart Vite after adding it.')
+  if (!key) throw new Error('AI is temporarily unavailable. Please try again later.')
 
   const fullPrompt = systemPrompt
     ? `${systemPrompt}\n\n${prompt}`

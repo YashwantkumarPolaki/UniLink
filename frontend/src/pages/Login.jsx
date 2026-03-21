@@ -49,8 +49,16 @@ export default function Login() {
     setLoading(true); setError('')
     try {
       const response = await API.post('/auth/login', { email, password })
+      // Save token first so the /auth/me call is authenticated
       localStorage.setItem('token', response.data.access_token)
-      localStorage.setItem('user', JSON.stringify(response.data.user))
+      // Fetch full profile (including avatar) from /auth/me
+      try {
+        const meRes = await API.get('/auth/me')
+        localStorage.setItem('user', JSON.stringify(meRes.data.user))
+      } catch {
+        // Fallback to login response if /auth/me fails
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+      }
       navigate('/dashboard')
     } catch {
       setError('Invalid email or password!')
