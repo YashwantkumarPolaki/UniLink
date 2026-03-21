@@ -16,7 +16,8 @@ API.interceptors.request.use((config) => {
 
 export default API
 export async function askAI(question) {
-  const res = await fetch("http://localhost:8000/ask", {
+  const base = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  const res = await fetch(`${base}/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question })
