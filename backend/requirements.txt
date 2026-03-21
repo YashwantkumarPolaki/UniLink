@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+firebase-admin
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+pydantic[email]
+mangum
+pywebpush
+httpx
