@@ -1,12 +1,23 @@
 import sys
 import os
+import traceback
+
 # Ensure the backend directory itself is on sys.path so plain imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from database import db
-from routes import auth, events, doubts, opportunities, ai, lost_found, notifications
+print("[MAIN] Starting imports...", flush=True)
+try:
+    from fastapi import FastAPI
+    from fastapi.middleware.cors import CORSMiddleware
+    print("[MAIN] FastAPI imported OK", flush=True)
+    from database import db
+    print("[MAIN] database imported OK", flush=True)
+    from routes import auth, events, doubts, opportunities, ai, lost_found, notifications
+    print("[MAIN] All routes imported OK", flush=True)
+except Exception as _e:
+    traceback.print_exc()
+    print(f"[MAIN] FATAL import error: {_e}", flush=True)
+    sys.exit(1)
 
 # Create FastAPI app
 app = FastAPI(
