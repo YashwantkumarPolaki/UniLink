@@ -4,8 +4,10 @@ services:
     runtime: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
       - key: SECRET_KEY
         sync: false
       - key: ALGORITHM

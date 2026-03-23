@@ -66,7 +66,7 @@ async def send_push_to_user(user_id: str, title: str, body_text: str, url: str =
     await _broadcast(title, body_text, url, user_id)
 
 
-async def _broadcast(title: str, body_text: str, url: str, user_id: str | None = None):
+async def _broadcast(title: str, body_text: str, url: str, user_id = None):
     try:
         from pywebpush import webpush, WebPushException
     except ImportError:
