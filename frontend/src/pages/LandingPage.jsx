@@ -165,7 +165,7 @@ function StatsBanner() {
   return (
     <section ref={ref} style={{ background: 'rgba(8,8,18,0.95)', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '80px 24px', position: 'relative', zIndex: 1 }}>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', maxWidth: 700, margin: '0 auto', flexWrap: 'wrap' }}>
-        {[['500', '+', 'STUDENTS'], ['50', '+', 'EVENTS'], ['200', '+', 'DOUBTS SOLVED']].map(([num, suf, label], i, arr) => (
+        {[['8', '+', 'FEATURES'], ['1', '', 'COLLEGE'], ['100', '%', 'FREE']].map(([num, suf, label], i, arr) => (
           <div key={label} style={{ flex: '1 1 160px', textAlign: 'center', padding: '20px 24px', borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
             <div style={{ fontFamily: 'Syne,sans-serif', fontWeight: 800, fontSize: 48, color: 'white', lineHeight: 1 }}>
               <CountUp to={parseInt(num)} suffix={suf} isActive={isInView} />
@@ -232,7 +232,7 @@ export default function LandingPage() {
           <button onClick={() => navigate('/login')} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'white', borderRadius: 50, padding: '13px 30px', fontWeight: 600, fontSize: 16, cursor: 'pointer', fontFamily: "'Inter',sans-serif" }}>Sign In</button>
         </motion.div>
         <motion.div className="hero-stats" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.60 }} style={{ display: 'flex', gap: 60, alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 32 }}>
-          {[['500+', 'STUDENTS'], ['50+', 'EVENTS'], ['200+', 'DOUBTS SOLVED']].map(([n, l]) => (
+          {[['8+', 'FEATURES'], ['1', 'COLLEGE'], ['100%', 'FREE']].map(([n, l]) => (
             <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
               <span style={{ fontFamily: 'Syne,sans-serif', fontWeight: 800, fontSize: 28, color: 'white' }}>{n}</span>
               <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{l}</span>
