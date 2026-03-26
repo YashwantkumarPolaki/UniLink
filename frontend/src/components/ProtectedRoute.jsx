@@ -7,5 +7,11 @@ export default function ProtectedRoute({ children }) {
   if (!token) {
     return <Navigate to="/login" replace state={{ from: location }} />
   }
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  if (!user.whatsapp_verified) {
+    return <Navigate to="/join-community" replace />
+  }
+
   return children
 }

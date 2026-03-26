@@ -15,6 +15,7 @@ import PostOpportunity from './pages/PostOpportunity'
 import Settings from './pages/Settings'
 import MockInterview from './pages/MockInterview'
 import LostFound from './pages/LostFound'
+import JoinCommunity from './pages/JoinCommunity'
 import AIBot from './components/AIBot'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/join-community" element={<JoinCommunity />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

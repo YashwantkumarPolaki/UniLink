@@ -139,6 +139,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
             "year_of_study": data.get("year_of_study"),
             "graduation_year": data.get("graduation_year"),
             "avatar": data.get("avatar", ""),
+            "whatsapp_verified": data.get("whatsapp_verified", False),
         }
     }
 
@@ -164,6 +165,13 @@ async def change_password(
         "password": hash_password(body.new_password)
     })
     return {"message": "Password updated successfully"}
+
+
+# WHATSAPP VERIFIED - mark user as having joined the WhatsApp group
+@router.put("/whatsapp-verified")
+async def set_whatsapp_verified(current_user: dict = Depends(get_current_user)):
+    db.collection("users").document(current_user["user_id"]).update({"whatsapp_verified": True})
+    return {"message": "WhatsApp verified"}
 
 
 # UPLOAD AVATAR - protected, stores base64 in Firestore
