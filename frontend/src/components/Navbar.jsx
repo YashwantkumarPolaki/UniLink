@@ -201,11 +201,13 @@ export default function Navbar() {
         {/* Mobile right: bell + avatar + hamburger */}
         <div className="nav-right-mobile" style={{ display: 'none', alignItems: 'center', gap: 10 }}>
           {/* Bell */}
-          <div ref={bellRef} style={{ position: 'relative' }}>
+          <div ref={bellRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <button onClick={openBell} style={{
               background: 'transparent', border: 'none',
               color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 20,
               padding: '4px', position: 'relative',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              lineHeight: 1,
             }}>
               🔔
               {unread > 0 && (
