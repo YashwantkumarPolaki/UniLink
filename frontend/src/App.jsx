@@ -18,6 +18,7 @@ import LostFound from './pages/LostFound'
 import JoinCommunity from './pages/JoinCommunity'
 import AIBot from './components/AIBot'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 
 function App() {
   useEffect(() => {
@@ -47,7 +48,7 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/mock-interview" element={<ProtectedRoute><MockInterview /></ProtectedRoute>} />
         <Route path="/lost-found" element={<ProtectedRoute><LostFound /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>
       <AIBot />
     </BrowserRouter>
