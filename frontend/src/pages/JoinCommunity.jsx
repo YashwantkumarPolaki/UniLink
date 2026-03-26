@@ -13,17 +13,13 @@ export default function JoinCommunity() {
 
   const handleJoined = async () => {
     setLoading(true)
-    try {
-      await API.put('/auth/whatsapp-verified')
-      // Update local user object
-      const user = JSON.parse(localStorage.getItem('user') || '{}')
-      localStorage.setItem('user', JSON.stringify({ ...user, whatsapp_verified: true }))
-      navigate('/dashboard')
-    } catch {
-      navigate('/dashboard')
-    } finally {
-      setLoading(false)
-    }
+    // Always mark as verified locally first
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    localStorage.setItem('user', JSON.stringify({ ...user, whatsapp_verified: true }))
+    // Best-effort backend update
+    API.put('/auth/whatsapp-verified').catch(() => {})
+    navigate('/dashboard')
+    setLoading(false)
   }
 
   return (
