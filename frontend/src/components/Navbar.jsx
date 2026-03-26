@@ -226,7 +226,8 @@ export default function Navbar() {
           {/* Hamburger */}
           <button className="nav-hamburger" onClick={() => setMenuOpen(v => !v)} style={{
             background: 'transparent', border: 'none', cursor: 'pointer',
-            display: 'flex', flexDirection: 'column', gap: 5, padding: 4,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            gap: 5, padding: 4, height: 32,
           }}>
             {[0,1,2].map(i => (
               <span key={i} style={{
