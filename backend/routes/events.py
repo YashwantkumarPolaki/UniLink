@@ -7,6 +7,12 @@ from typing import Optional
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
+@router.get("/my")
+async def get_my_events(current_user: dict = Depends(get_current_user)):
+    """Return all events posted by the current user (including pending)."""
+    docs = db.collection("events").where("posted_by", "==", current_user["user_id"]).get()
+    return [{"id": d.id, **d.to_dict()} for d in docs]
+
 @router.post("/")
 async def create_event(event: EventCreate, current_user: dict = Depends(require_role("club"))):
     event_data = {

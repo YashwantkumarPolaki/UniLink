@@ -10,6 +10,7 @@ const CAT_COLORS = { workshop: '#67e8f9', hackathon: '#a78bfa', fest: '#f472b6',
 export default function Events() {
   const [events, setEvents] = useState([])
   const [recommended, setRecommended] = useState([])
+  const [myPosts, setMyPosts] = useState([])
   const [category, setCategory] = useState('All')
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
@@ -48,6 +49,14 @@ export default function Events() {
       const rec = await API.get('/events/recommended')
       setRecommended(rec.data.recommended || [])
     } catch { setRecommended([]) }
+
+    // Fetch my posted events (for club/company users)
+    if (currentUser && (currentUser.role === 'club' || currentUser.role === 'admin')) {
+      try {
+        const mine = await API.get('/events/my')
+        setMyPosts(mine.data)
+      } catch { setMyPosts([]) }
+    }
 
     setLoading(false)
   }
@@ -90,6 +99,34 @@ export default function Events() {
             <button style={S.postBtn} onClick={() => navigate('/events/post')}>+ Post Event</button>
           )}
         </div>
+
+        {/* My Posts — visible only to club/admin who posted */}
+        {myPosts.length > 0 && (
+          <div style={{ ...S.section, background: 'rgba(167,139,250,0.04)', border: '1px solid rgba(167,139,250,0.12)', borderRadius: 20, padding: '24px 28px', marginBottom: 32 }}>
+            <div style={S.secHead}>
+              <span style={S.secIcon}>📋</span>
+              <h2 style={S.secTitle}>My Posts</h2>
+              <span style={{ ...S.tag, background: 'rgba(167,139,250,0.15)', color: '#a78bfa' }}>{myPosts.length} post{myPosts.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {myPosts.map(ev => {
+                const isPending = ev.status === 'pending'
+                const color = isPending ? '#fb923c' : '#34d399'
+                return (
+                  <div key={ev.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 20px', gap: 16, flexWrap: 'wrap' }}>
+                    <div>
+                      <div style={{ color: 'white', fontWeight: 700, fontSize: 15, fontFamily: 'Syne,sans-serif', marginBottom: 4 }}>{ev.title}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{ev.category} · {ev.date}</div>
+                    </div>
+                    <span style={{ background: color + '22', color, border: `1px solid ${color}44`, padding: '4px 14px', borderRadius: 20, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+                      {isPending ? '⏳ Pending Approval' : '✅ Approved'}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Recommended for You — all categories */}
         {recommended.length > 0 && (
