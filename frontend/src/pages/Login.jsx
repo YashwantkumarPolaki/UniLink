@@ -42,11 +42,13 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [slowWarning, setSlowWarning] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    setLoading(true); setError('')
+    setLoading(true); setError(''); setSlowWarning(false)
+    const slowTimer = setTimeout(() => setSlowWarning(true), 5000)
     try {
       const response = await API.post('/auth/login', { email, password })
       // Save token first so the /auth/me call is authenticated
@@ -60,9 +62,13 @@ export default function Login() {
         localStorage.setItem('user', JSON.stringify(response.data.user))
       }
       navigate('/dashboard')
-    } catch {
-      setError('Invalid email or password!')
-    } finally { setLoading(false) }
+    } catch (err) {
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('Server is waking up — please wait 30 seconds and try again.')
+      } else {
+        setError('Invalid email or password!')
+      }
+    } finally { clearTimeout(slowTimer); setLoading(false); setSlowWarning(false) }
   }
 
   return (
@@ -112,6 +118,7 @@ export default function Login() {
                 </div>
               </div>
 
+              {slowWarning && <p style={{ color: '#aaa', fontSize: 13, textAlign: 'center', margin: 0 }}>⏳ Server is waking up, please wait...</p>}
               <button type="submit" disabled={loading} style={loading ? S.btnDisabled : S.btn}>
                 {loading ? 'Signing in...' : 'Sign In →'}
               </button>
