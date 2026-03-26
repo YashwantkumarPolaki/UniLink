@@ -12,7 +12,7 @@ try:
     print("[MAIN] FastAPI imported OK", flush=True)
     from database import db
     print("[MAIN] database imported OK", flush=True)
-    from routes import auth, events, doubts, opportunities, ai, lost_found, notifications
+    from routes import auth, events, doubts, opportunities, ai, lost_found, notifications, admin
     print("[MAIN] All routes imported OK", flush=True)
 except Exception as _e:
     traceback.print_exc()
@@ -43,6 +43,7 @@ app.include_router(opportunities.router)
 app.include_router(ai.router)
 app.include_router(lost_found.router)
 app.include_router(notifications.router)
+app.include_router(admin.router)
 
 # Root route
 @app.get("/")

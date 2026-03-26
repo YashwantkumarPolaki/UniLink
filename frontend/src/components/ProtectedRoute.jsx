@@ -8,8 +8,10 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace state={{ from: location }} />
   }
 
+  // Check either persistent key or user object field
+  const hasJoined = localStorage.getItem('whatsapp_joined') === 'true'
   const user = JSON.parse(localStorage.getItem('user') || '{}')
-  if (!user.whatsapp_verified) {
+  if (!hasJoined && !user.whatsapp_verified) {
     return <Navigate to="/join-community" replace />
   }
 

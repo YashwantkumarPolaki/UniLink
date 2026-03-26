@@ -6,7 +6,7 @@ const NAV_ITEMS = {
   faculty: ['Dashboard', 'Events', 'Doubts', 'Opportunities'],
   club:    ['Dashboard', 'Events', 'Opportunities'],
   company: ['Dashboard', 'Opportunities'],
-  admin:   ['Dashboard', 'Events', 'Doubts', 'Opportunities'],
+  admin:   ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Admin'],
 }
 
 const NAV_PATHS = {
@@ -15,6 +15,7 @@ const NAV_PATHS = {
   'Doubts':         '/doubts',
   'Opportunities':  '/opportunities',
   'Mock Interview': '/mock-interview',
+  'Admin':          '/admin',
 }
 
 const ROLE_COLORS = {
@@ -56,7 +57,7 @@ export default function Navbar() {
       </div>
 
       {/* Nav links */}
-      <div style={{ display: 'flex', gap: 2 }}>
+      <div className="nav-links" style={{ display: 'flex', gap: 2 }}>
         {navItems.map(item => {
           const active = location.pathname === NAV_PATHS[item]
           return (
@@ -74,7 +75,7 @@ export default function Navbar() {
       </div>
 
       {/* Right: avatar + name + role badge + settings + logout */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {user?.avatar ? (
           <img src={user.avatar} alt="av"
             style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', border: `2px solid ${roleColor}55` }} />

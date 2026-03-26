@@ -11,15 +11,27 @@ export default function JoinCommunity() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleJoined = async () => {
-    setLoading(true)
-    // Always mark as verified locally first
+  const markJoined = () => {
+    localStorage.setItem('whatsapp_joined', 'true')
     const user = JSON.parse(localStorage.getItem('user') || '{}')
     localStorage.setItem('user', JSON.stringify({ ...user, whatsapp_verified: true }))
-    // Best-effort backend update
     API.put('/auth/whatsapp-verified').catch(() => {})
+  }
+
+  const handleWhatsAppClick = () => {
+    markJoined()
+    setJoined(true)
+  }
+
+  const handleAlreadyMember = () => {
+    markJoined()
     navigate('/dashboard')
-    setLoading(false)
+  }
+
+  const handleEnter = () => {
+    setLoading(true)
+    markJoined()
+    navigate('/dashboard')
   }
 
   return (
@@ -37,7 +49,6 @@ export default function JoinCommunity() {
       <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
         style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, padding: '48px 40px', maxWidth: 460, width: '100%', textAlign: 'center', position: 'relative', zIndex: 1 }}>
 
-        {/* WhatsApp icon */}
         <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 36 }}>
           💬
         </div>
@@ -55,13 +66,13 @@ export default function JoinCommunity() {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setJoined(true)}
+              onClick={handleWhatsAppClick}
               style={{ display: 'block', background: '#25D366', color: 'white', borderRadius: 12, padding: '14px 24px', fontWeight: 700, fontSize: 16, textDecoration: 'none', marginBottom: 16 }}
             >
               Join WhatsApp Group →
             </a>
             <button
-              onClick={() => setJoined(true)}
+              onClick={handleAlreadyMember}
               style={{ background: 'transparent', border: 'none', color: '#555', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}
             >
               Already a member? Continue
@@ -71,7 +82,7 @@ export default function JoinCommunity() {
           <>
             <p style={{ color: '#25D366', fontSize: 14, marginBottom: 20 }}>✓ Great! Click below to enter UniLink</p>
             <button
-              onClick={handleJoined}
+              onClick={handleEnter}
               disabled={loading}
               style={{ width: '100%', background: 'linear-gradient(135deg,#7c5cbf,#5c3d9e)', color: 'white', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 700, fontSize: 16, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
             >

@@ -153,24 +153,24 @@ export default function Dashboard() {
 
       <Navbar />
 
-      <div style={S.content}>
+      <div style={S.content} className="content-pad">
 
         {/* HERO */}
         <div style={{ ...S.hero, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(60px)', transition: 'all 1s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-          <div style={S.heroInner}>
+          <div style={S.heroInner} className="hero-inner">
             <div style={S.heroText}>
               <div style={S.heroBadge}>
                 <span style={S.heroBadgeDot} />
                 {user.role.toUpperCase()} · UNILINK
               </div>
-              <h1 style={S.heroH1}>
+              <h1 style={S.heroH1} className="hero-h1">
                 Hey,<br />
                 <span style={S.heroName}>{user.name.split(' ')[0]}</span> 👋
               </h1>
               <p style={S.heroP}>Your entire college universe — events, doubts, and opportunities — in one stunning place.</p>
-              <div style={S.heroActions}>
+              <div style={S.heroActions} className="hero-actions">
                 <Link to="/events" style={S.heroCTA}>Explore Now →</Link>
-                <div style={S.heroStatRow}>
+                <div style={S.heroStatRow} className="hero-stat-row">
                   {[['3+', 'Sections'], ['∞', 'Resources'], ['24/7', 'Live']].map(([n, l]) => (
                     <div key={l} style={S.heroStat}>
                       <span style={S.heroStatN}>{n}</span>
@@ -180,7 +180,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div style={S.heroVisual}>
+            <div style={S.heroVisual} className="hero-visual">
               <div style={S.orb}>
                 <div style={S.orbInner}>🎓</div>
                 <div style={S.orbRing1} />
@@ -199,7 +199,7 @@ export default function Dashboard() {
 
         {/* QUICK ACCESS */}
         <SectionHeader label="QUICK ACCESS" animated={animated} delay={0.2} />
-        <div style={S.cardsGrid}>
+        <div style={S.cardsGrid} className="cards-grid">
           {cards.map((card, i) => (
             <div key={card.title} style={{ ...S.card, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0) scale(1)' : 'translateY(60px) scale(0.95)', transition: `all 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.15}s` }}>
               <div style={{ ...S.cardShine, background: `radial-gradient(circle at top right, ${card.glow}, transparent 60%)` }} />
@@ -218,7 +218,7 @@ export default function Dashboard() {
 
         {/* EVENTS + DOUBTS PREVIEW */}
         <SectionHeader label="LIVE FEED" animated={animated} delay={0.5} />
-        <div style={S.twoCol}>
+        <div style={S.twoCol} className="two-col">
 
           {/* Upcoming Events */}
           <div style={{ ...S.previewCard, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(40px)', transition: 'all 0.8s ease 0.55s' }}>
@@ -281,7 +281,7 @@ export default function Dashboard() {
 
         {/* RECENT ACTIVITY + PROFILE */}
         <SectionHeader label="YOUR SPACE" animated={animated} delay={0.7} />
-        <div style={S.twoCol}>
+        <div style={S.twoCol} className="two-col">
 
           {/* Recent Activity */}
           <div style={{ ...S.previewCard, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(40px)', transition: 'all 0.8s ease 0.75s' }}>
