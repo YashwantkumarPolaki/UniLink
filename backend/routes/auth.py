@@ -169,6 +169,15 @@ async def change_password(
     return {"message": "Password updated successfully"}
 
 
+# ANNOUNCEMENTS - any logged-in user can read
+@router.get("/announcements")
+async def get_user_announcements(current_user: dict = Depends(get_current_user)):
+    docs = db.collection("announcements").order_by(
+        "created_at", direction="DESCENDING"
+    ).limit(20).get()
+    return [{"id": d.id, **d.to_dict()} for d in docs]
+
+
 # WHATSAPP VERIFIED - mark user as having joined the WhatsApp group
 @router.put("/whatsapp-verified")
 async def set_whatsapp_verified(current_user: dict = Depends(get_current_user)):

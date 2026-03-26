@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import API from '../api'
 import UniLinkLogo from './UniLinkLogo'
 
 const NAV_ITEMS = {
@@ -26,6 +28,15 @@ const ROLE_COLORS = {
   admin:   '#fb7185',
 }
 
+function timeAgo(isoStr) {
+  if (!isoStr) return ''
+  const diff = (Date.now() - new Date(isoStr).getTime()) / 1000
+  if (diff < 60) return 'Just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  return `${Math.floor(diff / 86400)}d ago`
+}
+
 export default function Navbar() {
   const navigate  = useNavigate()
   const location  = useLocation()
@@ -33,6 +44,40 @@ export default function Navbar() {
   const role      = user?.role || 'student'
   const navItems  = NAV_ITEMS[role] || NAV_ITEMS.student
   const roleColor = ROLE_COLORS[role] || '#a78bfa'
+
+  const [showBell, setShowBell]           = useState(false)
+  const [announcements, setAnnouncements] = useState([])
+  const [unread, setUnread]               = useState(0)
+  const bellRef = useRef(null)
+
+  // Fetch announcements once on mount
+  useEffect(() => {
+    API.get('/auth/announcements')
+      .then(r => {
+        setAnnouncements(r.data)
+        // Count ones newer than last-seen timestamp
+        const seen = parseInt(localStorage.getItem('announcements_seen') || '0', 10)
+        const newCount = r.data.filter(a => new Date(a.created_at).getTime() > seen).length
+        setUnread(newCount)
+      })
+      .catch(() => {})
+  }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => { if (bellRef.current && !bellRef.current.contains(e.target)) setShowBell(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const openBell = () => {
+    setShowBell(v => !v)
+    if (!showBell) {
+      // Mark all as seen
+      localStorage.setItem('announcements_seen', Date.now().toString())
+      setUnread(0)
+    }
+  }
 
   const logout = () => {
     localStorage.removeItem('token')
@@ -74,8 +119,82 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* Right: avatar + name + role badge + settings + logout */}
+      {/* Right side */}
       <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+
+        {/* 🔔 Bell / Announcements */}
+        <div ref={bellRef} style={{ position: 'relative' }}>
+          <button onClick={openBell} style={{
+            background: showBell ? 'rgba(167,139,250,0.12)' : 'rgba(255,255,255,0.05)',
+            border: showBell ? '1px solid rgba(167,139,250,0.3)' : '1px solid rgba(255,255,255,0.08)',
+            color: showBell ? '#a78bfa' : 'rgba(255,255,255,0.55)',
+            borderRadius: 10, padding: '7px 10px', cursor: 'pointer', fontSize: 16,
+            position: 'relative',
+          }}>
+            🔔
+            {unread > 0 && (
+              <span style={{
+                position: 'absolute', top: 2, right: 2,
+                width: 8, height: 8, borderRadius: '50%',
+                background: '#fb7185', border: '1.5px solid #000',
+              }} />
+            )}
+          </button>
+
+          {/* Dropdown */}
+          {showBell && (
+            <div style={{
+              position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+              width: 320, background: 'rgba(13,8,32,0.97)',
+              border: '1px solid rgba(167,139,250,0.2)',
+              borderRadius: 16, boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+              zIndex: 200, overflow: 'hidden',
+            }}>
+              <div style={{
+                padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.07)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              }}>
+                <span style={{ color: 'white', fontFamily: 'Syne,sans-serif', fontWeight: 700, fontSize: 15 }}>
+                  📣 Announcements
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+                  {announcements.length} total
+                </span>
+              </div>
+
+              <div style={{ maxHeight: 380, overflowY: 'auto' }}>
+                {announcements.length === 0 ? (
+                  <div style={{ padding: '32px 18px', textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
+                    No announcements yet
+                  </div>
+                ) : (
+                  announcements.map(a => (
+                    <div key={a.id} style={{
+                      padding: '14px 18px',
+                      borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ color: 'white', fontWeight: 600, fontSize: 14 }}>{a.title}</span>
+                        <span style={{
+                          fontSize: 10, padding: '2px 8px', borderRadius: 10,
+                          background: 'rgba(167,139,250,0.12)', color: '#a78bfa', fontWeight: 600,
+                        }}>{a.target || 'All'}</span>
+                      </div>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                        {a.message}
+                      </p>
+                      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11, marginTop: 6, display: 'block' }}>
+                        {timeAgo(a.created_at)}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Avatar */}
         {user?.avatar ? (
           <img src={user.avatar} alt="av"
             style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', border: `2px solid ${roleColor}55` }} />
@@ -90,17 +209,21 @@ export default function Navbar() {
             {user?.name?.charAt(0)?.toUpperCase() || '?'}
           </div>
         )}
+
         <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14 }}>{user?.name}</span>
+
         <span className="role-badge" style={{
           fontSize: 11, fontWeight: 700, letterSpacing: 1,
           background: roleColor + '22', color: roleColor,
           border: `1px solid ${roleColor}40`, padding: '3px 10px', borderRadius: 20,
         }}>{role.toUpperCase()}</span>
+
         <button className="settings-btn" onClick={() => navigate('/settings')} style={{
           background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
           color: 'rgba(255,255,255,0.45)', borderRadius: 10, padding: '7px 12px',
           cursor: 'pointer', fontSize: 14,
         }}>⚙️</button>
+
         <button className="logout-btn" onClick={logout} style={{
           background: 'transparent', border: '1px solid rgba(255,255,255,0.1)',
           color: 'rgba(255,255,255,0.35)', borderRadius: 10, padding: '7px 14px',
