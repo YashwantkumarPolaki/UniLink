@@ -14,6 +14,10 @@ class ChangePasswordRequest(BaseModel):
 class AvatarRequest(BaseModel):
     avatar_base64: str   # data URL: "data:image/png;base64,..."
 
+class ProfileUpdate(BaseModel):
+    whatsapp_link: str = ""
+    description: str = ""
+
 # All routes here will start with /auth
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -169,6 +173,25 @@ async def change_password(
     return {"message": "Password updated successfully"}
 
 
+# CLUBS LIST - any logged-in user can see clubs & companies
+@router.get("/clubs")
+async def get_clubs(current_user: dict = Depends(get_current_user)):
+    docs = db.collection("users").where("role", "in", ["club", "company"]).get()
+    clubs = []
+    for doc in docs:
+        d = doc.to_dict()
+        clubs.append({
+            "id": doc.id,
+            "name": d.get("name", ""),
+            "college": d.get("college", ""),
+            "role": d.get("role", "club"),
+            "email": d.get("email", ""),
+            "whatsapp_link": d.get("whatsapp_link", ""),
+            "description": d.get("description", ""),
+        })
+    return clubs
+
+
 # ANNOUNCEMENTS - any logged-in user can read
 @router.get("/announcements")
 async def get_user_announcements(current_user: dict = Depends(get_current_user)):
@@ -183,6 +206,22 @@ async def get_user_announcements(current_user: dict = Depends(get_current_user))
 async def set_whatsapp_verified(current_user: dict = Depends(get_current_user)):
     db.collection("users").document(current_user["user_id"]).update({"whatsapp_verified": True})
     return {"message": "WhatsApp verified"}
+
+
+# UPDATE CLUB/COMPANY PROFILE (whatsapp link, description)
+@router.post("/update-profile")
+async def update_profile(
+    body: ProfileUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    update_data = {}
+    if body.whatsapp_link:
+        update_data["whatsapp_link"] = body.whatsapp_link
+    if body.description:
+        update_data["description"] = body.description
+    if update_data:
+        db.collection("users").document(current_user["user_id"]).update(update_data)
+    return {"message": "Profile updated"}
 
 
 # UPLOAD AVATAR - protected, stores base64 in Firestore

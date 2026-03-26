@@ -11,6 +11,7 @@ export default function Events() {
   const [events, setEvents] = useState([])
   const [recommended, setRecommended] = useState([])
   const [myPosts, setMyPosts] = useState([])
+  const [clubs, setClubs] = useState([])
   const [category, setCategory] = useState('All')
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
@@ -57,6 +58,12 @@ export default function Events() {
         setMyPosts(mine.data)
       } catch { setMyPosts([]) }
     }
+
+    // Fetch clubs & communities
+    try {
+      const c = await API.get('/auth/clubs')
+      setClubs(c.data)
+    } catch { setClubs([]) }
 
     setLoading(false)
   }
@@ -177,6 +184,67 @@ export default function Events() {
                   isRegistered={registeredIds.has(e.id)}
                 />
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Clubs & Communities */}
+        {clubs.length > 0 && (
+          <div style={{ ...S.section, marginBottom: 40 }}>
+            <div style={S.secHead}>
+              <span style={S.secIcon}>🏛️</span>
+              <h2 style={S.secTitle}>Clubs &amp; Communities</h2>
+              <span style={{ ...S.tag, background: 'rgba(52,211,153,0.12)', color: '#34d399' }}>
+                {clubs.length} on campus
+              </span>
+            </div>
+            <p style={S.secSub}>Discover and connect with clubs active on your campus</p>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              {clubs.map(club => {
+                const isClub = club.role === 'club'
+                const color = isClub ? '#34d399' : '#fb923c'
+                const initial = club.name?.charAt(0)?.toUpperCase() || '?'
+                return (
+                  <div key={club.id} style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${color}22`,
+                    borderRadius: 18, padding: '18px 20px',
+                    display: 'flex', alignItems: 'center', gap: 14,
+                    minWidth: 220, flex: '1 1 220px', maxWidth: 320,
+                  }}>
+                    <div style={{
+                      width: 46, height: 46, borderRadius: '50%', flexShrink: 0,
+                      background: `linear-gradient(135deg,${color}33,${color}11)`,
+                      border: `2px solid ${color}44`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 20, fontWeight: 800, color, fontFamily: 'Syne,sans-serif',
+                    }}>{initial}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ color: 'white', fontWeight: 700, fontSize: 14, fontFamily: 'Syne,sans-serif', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {club.name}
+                      </div>
+                      <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginBottom: 8 }}>
+                        {isClub ? '🏛️ Club' : '🏢 Company'} · {club.college || 'Campus'}
+                      </div>
+                      {club.whatsapp_link ? (
+                        <a href={club.whatsapp_link} target="_blank" rel="noopener noreferrer" style={{
+                          display: 'inline-block', background: `${color}18`,
+                          color, border: `1px solid ${color}33`,
+                          borderRadius: 20, padding: '4px 12px', fontSize: 11,
+                          fontWeight: 700, textDecoration: 'none',
+                        }}>Join Group →</a>
+                      ) : (
+                        <a href={`mailto:${club.email}`} style={{
+                          display: 'inline-block', background: 'rgba(255,255,255,0.06)',
+                          color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: 20, padding: '4px 12px', fontSize: 11,
+                          fontWeight: 700, textDecoration: 'none',
+                        }}>Contact →</a>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}

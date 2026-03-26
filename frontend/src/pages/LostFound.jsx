@@ -31,7 +31,6 @@ export default function LostFound() {
     const u = localStorage.getItem('user')
     if (!u) { navigate('/login'); return }
     const parsed = JSON.parse(u)
-    if (parsed.role !== 'student') { navigate('/dashboard'); return }
     setUser(parsed)
     fetchPosts()
   }, [])

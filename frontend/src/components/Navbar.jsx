@@ -4,11 +4,11 @@ import API from '../api'
 import UniLinkLogo from './UniLinkLogo'
 
 const NAV_ITEMS = {
-  student: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Mock Interview'],
-  faculty: ['Dashboard', 'Events', 'Doubts', 'Opportunities'],
-  club:    ['Dashboard', 'Events', 'Opportunities'],
+  student: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found', 'Mock Interview'],
+  faculty: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found'],
+  club:    ['Dashboard', 'Events', 'Opportunities', 'Lost & Found'],
   company: ['Dashboard', 'Opportunities'],
-  admin:   ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Admin'],
+  admin:   ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found', 'Admin'],
 }
 
 const NAV_PATHS = {
@@ -16,6 +16,7 @@ const NAV_PATHS = {
   'Events':         '/events',
   'Doubts':         '/doubts',
   'Opportunities':  '/opportunities',
+  'Lost & Found':   '/lost-found',
   'Mock Interview': '/mock-interview',
   'Admin':          '/admin',
 }

@@ -37,9 +37,30 @@ export default function Settings() {
   const [preview, setPreview]     = useState(user.avatar || '')
   const [avatarLoading, setAvatarLoading] = useState(false)
 
+  // WhatsApp/Description (clubs & companies only)
+  const [profileForm, setProfileForm] = useState({
+    whatsapp_link: user.whatsapp_link || '',
+    description: user.description || '',
+  })
+  const [profileLoading, setProfileLoading] = useState(false)
+
   // Toast
   const [toast, setToast] = useState(null)
   const showToast = (msg, type = 'success') => setToast({ msg, type })
+
+  // ── Club/Company profile update ──────────────────────────────────────────
+  const handleProfileSave = async e => {
+    e.preventDefault()
+    setProfileLoading(true)
+    try {
+      await API.post('/auth/update-profile', profileForm)
+      const updated = { ...user, ...profileForm }
+      localStorage.setItem('user', JSON.stringify(updated))
+      showToast('Profile updated!')
+    } catch (err) {
+      showToast(err.response?.data?.detail || 'Failed to update', 'error')
+    } finally { setProfileLoading(false) }
+  }
 
   // ── Password change ──────────────────────────────────────────────────────
   const handlePwChange = async e => {
@@ -111,13 +132,13 @@ export default function Settings() {
       <div style={S.bg1} /><div style={S.bg2} />
       <Navbar />
 
-      <div style={S.page}>
+      <div style={S.page} className="page-pad">
         <div style={S.header}>
           <h1 style={S.title}>Settings ⚙️</h1>
           <p style={S.sub}>Manage your account preferences</p>
         </div>
 
-        <div style={S.grid}>
+        <div style={S.grid} className="two-col">
 
           {/* ── Profile Picture ────────────────────────────────────────── */}
           <div style={S.card}>
@@ -152,6 +173,38 @@ export default function Settings() {
               </p>
             )}
           </div>
+
+          {/* ── Club/Company Profile ───────────────────────────────────── */}
+          {(user.role === 'club' || user.role === 'company') && (
+            <div style={S.card}>
+              <h2 style={S.cardTitle}>{user.role === 'club' ? '🏛️' : '🏢'} Community Profile</h2>
+              <p style={S.cardSub}>Shown in the Events → Clubs &amp; Communities section</p>
+              <form onSubmit={handleProfileSave} style={S.form}>
+                <div style={S.field}>
+                  <label style={S.label}>WhatsApp Group Link</label>
+                  <input
+                    type="url" placeholder="https://chat.whatsapp.com/..."
+                    value={profileForm.whatsapp_link}
+                    onChange={e => setProfileForm(p => ({ ...p, whatsapp_link: e.target.value }))}
+                    style={S.input}
+                  />
+                </div>
+                <div style={S.field}>
+                  <label style={S.label}>Short Description</label>
+                  <input
+                    type="text" placeholder="e.g. Coding club for CSE students"
+                    value={profileForm.description}
+                    onChange={e => setProfileForm(p => ({ ...p, description: e.target.value }))}
+                    style={S.input}
+                    maxLength={120}
+                  />
+                </div>
+                <button type="submit" disabled={profileLoading} style={profileLoading ? S.ghostBtn : S.gradBtn}>
+                  {profileLoading ? 'Saving...' : 'Save Profile →'}
+                </button>
+              </form>
+            </div>
+          )}
 
           {/* ── Change Password ────────────────────────────────────────── */}
           <div style={S.card}>
