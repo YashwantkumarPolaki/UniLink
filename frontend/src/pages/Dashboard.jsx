@@ -97,6 +97,9 @@ export default function Dashboard() {
   const [events, setEvents] = useState([])
   const [doubts, setDoubts] = useState([])
   const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)])
+  const [showCommunity, setShowCommunity] = useState(
+    localStorage.getItem('community_banner_dismissed') !== 'true'
+  )
   const navigate = useNavigate()
   const { isSubscribed, isSupported, requestPermission } = usePushNotifications()
   const [notifAsked, setNotifAsked] = useState(false)
@@ -196,6 +199,47 @@ export default function Dashboard() {
           <div style={S.quoteText}>"{quote.text}"</div>
           <div style={S.quoteAuthor}>— {quote.author}</div>
         </div>
+
+        {/* COMMUNITY BANNER */}
+        {showCommunity && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 14,
+            background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(167,139,250,0.06))',
+            border: '1px solid rgba(167,139,250,0.2)',
+            borderRadius: 16, padding: '12px 18px', marginBottom: 32,
+            opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'all 0.6s ease 0.18s',
+          }}>
+            <div style={{ fontSize: 28, flexShrink: 0 }}>🎓</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                <span style={{ color: 'white', fontWeight: 700, fontSize: 14, fontFamily: 'Syne,sans-serif' }}>UniLink Community</span>
+                <span style={{ background: 'rgba(167,139,250,0.2)', color: '#a78bfa', fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 6, letterSpacing: 1 }}>OFFICIAL</span>
+              </div>
+              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>Get announcements, updates &amp; connect with your campus</span>
+            </div>
+            <a
+              href="https://chat.whatsapp.com/FP4S2uLg8tjKB5pPHK0Gvc"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                background: 'linear-gradient(135deg,#7c3aed,#a78bfa)',
+                color: 'white', borderRadius: 20, padding: '7px 16px',
+                fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                whiteSpace: 'nowrap', flexShrink: 0,
+                boxShadow: '0 4px 16px rgba(124,58,237,0.35)',
+              }}>
+              Join →
+            </a>
+            <button onClick={() => {
+              setShowCommunity(false)
+              localStorage.setItem('community_banner_dismissed', 'true')
+            }} style={{
+              background: 'transparent', border: 'none',
+              color: 'rgba(255,255,255,0.25)', cursor: 'pointer',
+              fontSize: 18, padding: '0 4px', flexShrink: 0, lineHeight: 1,
+            }}>✕</button>
+          </div>
+        )}
 
         {/* QUICK ACCESS */}
         <SectionHeader label="QUICK ACCESS" animated={animated} delay={0.2} />
