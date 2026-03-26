@@ -88,9 +88,9 @@ export default function Events() {
 
       <Navbar />
 
-      <div style={S.page}>
+      <div style={S.page} className="page-pad">
         {/* Header */}
-        <div style={S.header}>
+        <div style={S.header} className="page-header">
           <div>
             <h1 style={S.pageTitle}>Events 🎯</h1>
             <p style={S.pageSub}>Discover events tailored for <span style={{color:'#a78bfa'}}>{user?.branch || 'your branch'}</span></p>
@@ -136,7 +136,7 @@ export default function Events() {
               <h2 style={S.secTitle}>Recommended for You</h2>
               <span style={S.tag}>{user?.branch}</span>
             </div>
-            <div style={S.grid}>
+            <div style={S.grid} className="events-grid">
               {recommended.slice(0, 3).map(e => (
                 <EventCard
                   key={e.id} event={e}
@@ -207,7 +207,7 @@ export default function Events() {
               <p style={{fontSize:13,color:'rgba(255,255,255,0.3)',marginTop:8}}>Check back later!</p>
             </div>
           ) : (
-            <div style={S.grid}>
+            <div style={S.grid} className="events-grid">
               {filtered.map(e => (
                 <EventCard
                   key={e.id} event={e}
@@ -320,7 +320,7 @@ function EventModal({ event, isRegistered: initialRegistered, onClose, onRegiste
       backdropFilter:'blur(8px)', zIndex:1000,
       display:'flex', alignItems:'center', justifyContent:'center', padding:24
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div onClick={e => e.stopPropagation()} className="modal-box" style={{
         background:'linear-gradient(160deg,#0d0820,#050510)',
         border:'1px solid rgba(167,139,250,0.2)',
         borderRadius:28, padding:40, maxWidth:600, width:'100%',

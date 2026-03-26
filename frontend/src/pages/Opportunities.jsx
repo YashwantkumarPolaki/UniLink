@@ -101,9 +101,9 @@ export default function Opportunities() {
 
       <Navbar />
 
-      <div style={S.page}>
+      <div style={S.page} className="page-pad">
         {/* Header */}
-        <div style={S.header}>
+        <div style={S.header} className="page-header">
           <div>
             <h1 style={S.pageTitle}>Opportunities 💼</h1>
             <p style={S.pageSub}>Internships, jobs, fellowships — <span style={{ color: '#a78bfa' }}>AI-verified for safety</span> 🤖</p>
@@ -270,7 +270,7 @@ function OpportunityModal({ opportunity: o, onClose }) {
 
   return (
     <div onClick={onClose} style={S.overlay}>
-      <div onClick={e => e.stopPropagation()} style={S.modal}>
+      <div onClick={e => e.stopPropagation()} className="modal-box" style={S.modal}>
         <button onClick={onClose} style={S.closeBtn}>✕</button>
 
         {/* Type + deadline badges */}

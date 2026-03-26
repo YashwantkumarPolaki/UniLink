@@ -43,7 +43,7 @@ export default function Doubts() {
 
       <Navbar />
 
-      <div style={page}>
+      <div style={page} className="page-pad">
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontFamily: 'Syne,sans-serif', fontSize: 36, fontWeight: 800, marginBottom: 8 }}>Doubts &amp; Study AI 🧠</h1>
@@ -53,7 +53,7 @@ export default function Doubts() {
         </div>
 
         {/* Tab Bar */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 32, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 6, width: 'fit-content' }}>
+        <div className="tab-bar" style={{ display: 'flex', gap: 8, marginBottom: 32, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 6, width: 'fit-content' }}>
           {visibleTabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               style={{

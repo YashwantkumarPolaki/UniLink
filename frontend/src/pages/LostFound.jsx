@@ -113,7 +113,7 @@ export default function LostFound() {
 
       <Navbar />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 48px', position: 'relative', zIndex: 1 }}>
+      <div className="page-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 48px', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ marginBottom: 36 }}>
@@ -232,7 +232,7 @@ export default function LostFound() {
       {/* Modal */}
       {showModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-          <div style={{ ...glass, borderRadius: 24, padding: '36px', width: '100%', maxWidth: 520, position: 'relative', boxShadow: '0 40px 80px rgba(0,0,0,0.6)', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="modal-box" style={{ ...glass, borderRadius: 24, padding: '36px', width: '100%', maxWidth: 520, position: 'relative', boxShadow: '0 40px 80px rgba(0,0,0,0.6)', maxHeight: '90vh', overflowY: 'auto' }}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: 18, right: 18, background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}><X size={16} /></button>
             <h2 style={{ fontFamily: 'Syne, sans-serif', color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Report an Item</h2>
 

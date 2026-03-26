@@ -410,7 +410,7 @@ export default function MockInterview() {
       <div style={blob1} /><div style={blob2} /><div style={blob3} />
       <Navbar />
 
-      <div style={page}>
+      <div style={page} className="page-pad">
         <div style={{ marginBottom: 36 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
             <h1 style={{ fontFamily: 'Syne,sans-serif', fontSize: 34, fontWeight: 800, margin: 0 }}>Mock Interview 🎤</h1>

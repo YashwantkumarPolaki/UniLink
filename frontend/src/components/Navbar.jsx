@@ -41,7 +41,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav style={{
+    <nav className="main-nav" style={{
       background: 'rgba(255,255,255,0.03)',
       backdropFilter: 'blur(24px)',
       WebkitBackdropFilter: 'blur(24px)',
@@ -91,17 +91,17 @@ export default function Navbar() {
           </div>
         )}
         <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14 }}>{user?.name}</span>
-        <span style={{
+        <span className="role-badge" style={{
           fontSize: 11, fontWeight: 700, letterSpacing: 1,
           background: roleColor + '22', color: roleColor,
           border: `1px solid ${roleColor}40`, padding: '3px 10px', borderRadius: 20,
         }}>{role.toUpperCase()}</span>
-        <button onClick={() => navigate('/settings')} style={{
+        <button className="settings-btn" onClick={() => navigate('/settings')} style={{
           background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
           color: 'rgba(255,255,255,0.45)', borderRadius: 10, padding: '7px 12px',
           cursor: 'pointer', fontSize: 14,
         }}>⚙️</button>
-        <button onClick={logout} style={{
+        <button className="logout-btn" onClick={logout} style={{
           background: 'transparent', border: '1px solid rgba(255,255,255,0.1)',
           color: 'rgba(255,255,255,0.35)', borderRadius: 10, padding: '7px 14px',
           cursor: 'pointer', fontSize: 13,

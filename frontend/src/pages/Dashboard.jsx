@@ -191,7 +191,7 @@ export default function Dashboard() {
         </div>
 
         {/* QUOTE OF THE DAY */}
-        <div style={{ ...S.quoteCard, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(40px)', transition: 'all 0.8s ease 0.15s' }}>
+        <div className="quote-card" style={{ ...S.quoteCard, opacity: animated ? 1 : 0, transform: animated ? 'translateY(0)' : 'translateY(40px)', transition: 'all 0.8s ease 0.15s' }}>
           <div style={S.quoteIcon}>✦</div>
           <div style={S.quoteText}>"{quote.text}"</div>
           <div style={S.quoteAuthor}>— {quote.author}</div>
