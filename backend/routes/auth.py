@@ -45,6 +45,7 @@ async def signup(user: SignupRequest):
         "recruiter_name": user.recruiter_name,
         "hiring_process": user.hiring_process,
         "salary_range": user.salary_range,
+        "whatsapp_verified": False,
     }
 
     # Save to Firestore
@@ -114,6 +115,7 @@ async def login(credentials: LoginRequest):
             "year_of_study": user_data.get("year_of_study"),
             "graduation_year": user_data.get("graduation_year"),
             "avatar": user_data.get("avatar", ""),
+            "whatsapp_verified": user_data.get("whatsapp_verified", False),
         }
     }
 
