@@ -16,6 +16,8 @@ import Settings from './pages/Settings'
 import MockInterview from './pages/MockInterview'
 import LostFound from './pages/LostFound'
 import JoinCommunity from './pages/JoinCommunity'
+import CoFounder from './pages/CoFounder'
+import CampusMap from './pages/CampusMap'
 import AIBot from './components/AIBot'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
@@ -48,6 +50,8 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/mock-interview" element={<ProtectedRoute><MockInterview /></ProtectedRoute>} />
         <Route path="/lost-found" element={<ProtectedRoute><LostFound /></ProtectedRoute>} />
+        <Route path="/cofounders" element={<ProtectedRoute><CoFounder /></ProtectedRoute>} />
+        <Route path="/campus-map" element={<ProtectedRoute><CampusMap /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>
       <AIBot />

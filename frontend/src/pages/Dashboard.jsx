@@ -131,6 +131,8 @@ export default function Dashboard() {
     { icon: '💬', title: 'Doubts', desc: 'Ask questions, get answers from peers', color: '#f472b6', glow: 'rgba(244,114,182,0.5)', path: '/doubts', tag: 'ASK' },
     { icon: '💼', title: 'Opportunities', desc: 'Internships, jobs & more curated for you', color: '#34d399', glow: 'rgba(52,211,153,0.5)', path: '/opportunities', tag: 'GROW' },
     { icon: '🔍', title: 'Lost & Found', desc: 'Lost something? Found something? Post it!', color: '#fb7185', glow: 'rgba(251,113,133,0.5)', path: '/lost-found', tag: 'CAMPUS' },
+{ icon: '🤝', title: 'Co-Founder', desc: 'Post your startup idea & find co-founders', color: '#f59e0b', glow: 'rgba(245,158,11,0.5)', path: '/cofounders', tag: 'STARTUP' },
+    { icon: '🗺️', title: 'Campus Map', desc: 'Find any block, seminar hall or lab instantly', color: '#a78bfa', glow: 'rgba(167,139,250,0.5)', path: '/campus-map', tag: 'NAVIGATE' },
   ]
 
   const activity = [
@@ -457,7 +459,7 @@ const S = {
   quoteAuthor: { color: '#a78bfa', fontSize: 13, fontWeight: 600, flexShrink: 0 },
 
   // Cards
-  cardsGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 40 },
+  cardsGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginBottom: 40 },
   card: { ...glass, borderRadius: 24, padding: '36px 32px', display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' },
   cardShine: { position: 'absolute', top: 0, right: 0, width: '100%', height: '100%', pointerEvents: 'none' },
   cardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' },
