@@ -132,7 +132,6 @@ export default function Dashboard() {
     { icon: '💼', title: 'Opportunities', desc: 'Internships, jobs & more curated for you', color: '#34d399', glow: 'rgba(52,211,153,0.5)', path: '/opportunities', tag: 'GROW' },
     { icon: '🔍', title: 'Lost & Found', desc: 'Lost something? Found something? Post it!', color: '#fb7185', glow: 'rgba(251,113,133,0.5)', path: '/lost-found', tag: 'CAMPUS' },
 { icon: '🤝', title: 'Co-Founder', desc: 'Post your startup idea & find co-founders', color: '#f59e0b', glow: 'rgba(245,158,11,0.5)', path: '/cofounders', tag: 'STARTUP' },
-    { icon: '🗺️', title: 'Campus Map', desc: 'Find any block, seminar hall or lab instantly', color: '#a78bfa', glow: 'rgba(167,139,250,0.5)', path: '/campus-map', tag: 'NAVIGATE' },
   ]
 
   const activity = [
