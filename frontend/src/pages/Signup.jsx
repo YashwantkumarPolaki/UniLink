@@ -185,6 +185,7 @@ export default function Signup() {
     faculty_department: '',
     club_name: '',
     company_name: '', recruiter_name: '', hiring_process: '', salary_range: '',
+    personal_email: '', linkedin: '',
     join_year: '', year_of_study: '', graduation_year: '',
     manual_join_year: '', manual_duration: '4',
   })
@@ -277,19 +278,26 @@ export default function Signup() {
               </div>
 
               {/* Name + Email */}
-              <div style={S.row}>
+              {role === 'company' ? (
                 <div style={S.inputGroup}>
                   <label style={S.label}>FULL NAME</label>
                   <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
                 </div>
-                <div style={S.inputGroup}>
-                  <label style={S.label}>COLLEGE EMAIL</label>
-                  <input name="email" type="email" placeholder="ra2211003@srmist.edu.in" value={form.email} onChange={handleChange} style={S.input} required />
+              ) : (
+                <div style={S.row}>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>FULL NAME</label>
+                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
+                  </div>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>COLLEGE EMAIL</label>
+                    <input name="email" type="email" placeholder="ra2211003@srmist.edu.in" value={form.email} onChange={handleChange} style={S.input} required />
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Smart email detection */}
-              {form.email && emailInfo && emailInfo.isValid && (
+              {/* Smart email detection - not for company */}
+              {role !== 'company' && form.email && emailInfo && emailInfo.isValid && (
                 <div style={{ background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.3)', borderRadius: 12, padding: '14px 18px', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
                   <span style={{ color: '#34d399', fontSize: 13, fontWeight: 700 }}>✅ {emailInfo.shortName} detected</span>
                   <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>📅 Joined: {emailInfo.joinYear}</span>
@@ -298,8 +306,8 @@ export default function Signup() {
                 </div>
               )}
 
-              {/* Manual college inputs */}
-              {!emailInfo && (
+              {/* Manual college inputs - not for company */}
+              {role !== 'company' && !emailInfo && (
                 <>
                   <div style={S.inputGroup}>
                     <label style={S.label}>COLLEGE NAME</label>
@@ -372,18 +380,18 @@ export default function Signup() {
                       <input name="company_name" placeholder="e.g. Google India" value={form.company_name} onChange={handleChange} style={S.input} required />
                     </div>
                     <div style={S.inputGroup}>
-                      <label style={S.label}>RECRUITER NAME</label>
-                      <input name="recruiter_name" placeholder="Your name" value={form.recruiter_name} onChange={handleChange} style={S.input} required />
+                      <label style={S.label}>HIRING PROCESS</label>
+                      <CustomSelect name="hiring_process" value={form.hiring_process} onChange={handleChange} options={['On-Campus', 'Off-Campus', 'Both']} placeholder="Select Hiring Mode" />
                     </div>
                   </div>
                   <div style={S.row}>
                     <div style={S.inputGroup}>
-                      <label style={S.label}>HIRING PROCESS</label>
-                      <CustomSelect name="hiring_process" value={form.hiring_process} onChange={handleChange} options={['On-Campus', 'Off-Campus', 'Both']} placeholder="Select Hiring Mode" />
+                      <label style={S.label}>PERSONAL EMAIL</label>
+                      <input name="personal_email" type="email" placeholder="Enter personal email (gmail, etc.)" value={form.personal_email} onChange={handleChange} style={S.input} required />
                     </div>
                     <div style={S.inputGroup}>
-                      <label style={S.label}>STIPEND / SALARY RANGE</label>
-                      <input name="salary_range" placeholder="e.g. ₹20,000/mo or ₹8–12 LPA" value={form.salary_range} onChange={handleChange} style={S.input} />
+                      <label style={S.label}>LINKEDIN PROFILE (URL)</label>
+                      <input name="linkedin" type="url" placeholder="https://linkedin.com/in/yourprofile" value={form.linkedin} onChange={handleChange} style={S.input} />
                     </div>
                   </div>
                 </>
