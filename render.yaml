@@ -17,4 +17,4 @@ services:
       - key: FIREBASE_CREDENTIALS
         sync: false
       - key: GEMINI_API_KEY
-        sync: false
+        sync: false# refresh
