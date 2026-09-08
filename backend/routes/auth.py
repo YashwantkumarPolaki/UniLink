@@ -4,6 +4,7 @@ from models.user import SignupRequest, LoginRequest
 from services.auth_service import hash_password, verify_password, create_access_token
 from middleware.auth_middleware import get_current_user
 from database import db
+from datetime import datetime
 
 
 class ChangePasswordRequest(BaseModel):
@@ -50,6 +51,9 @@ async def signup(user: SignupRequest):
         "hiring_process": user.hiring_process,
         "salary_range": user.salary_range,
         "whatsapp_verified": False,
+        # Company/Club approval — starts as pending until admin approves
+        "is_approved": False if user.role in ("company", "club") else True,
+        "created_at": datetime.utcnow().isoformat(),
     }
 
     # Save to Firestore
@@ -93,6 +97,14 @@ async def login(credentials: LoginRequest):
 
     if not password_ok:
         raise HTTPException(status_code=401, detail="Incorrect password")
+
+    # Block unapproved company / club accounts
+    if user_data.get("role") in ("company", "club") and not user_data.get("is_approved", False):
+        role_label = "recruiter" if user_data.get("role") == "company" else "club"
+        raise HTTPException(
+            status_code=403,
+            detail=f"Your {role_label} account is pending admin approval. You'll be notified once approved."
+        )
 
     # Create JWT token with user info inside
     token = create_access_token({
@@ -164,7 +176,10 @@ async def change_password(
         raise HTTPException(404, "User not found")
 
     user_data = user_doc.to_dict()
-    if not verify_password(body.current_password, user_data["password"]):
+    stored_password = user_data.get("password", "")
+    is_bcrypt = stored_password.startswith("$2b$") or stored_password.startswith("$2a$")
+    password_ok = verify_password(body.current_password, stored_password) if is_bcrypt else (body.current_password == stored_password)
+    if not password_ok:
         raise HTTPException(400, "Current password is incorrect")
 
     db.collection("users").document(current_user["user_id"]).update({

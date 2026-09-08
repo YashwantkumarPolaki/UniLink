@@ -1,7 +1,7 @@
 // ─── GEMINI 2.0 AI CALL ───────────────────────────────────────────────────────
 import { askAI } from '../../services/aiService'
 
-export async function callAI(prompt, _model = 'gemini') {
+export async function callAI(prompt) {
   try {
     return await askAI(prompt)
   } catch (e) {

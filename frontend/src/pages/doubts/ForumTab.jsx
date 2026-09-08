@@ -18,8 +18,6 @@ export default function ForumTab({ user }) {
   // Local credits for session (in real app, fetched from backend)
   const [userCredits, setUserCredits] = useState(20)
 
-  useEffect(() => { fetchDoubts() }, [])
-
   const fetchDoubts = async () => {
     setLoading(true)
     try {
@@ -28,6 +26,10 @@ export default function ForumTab({ user }) {
     } catch { setDoubts([]) }
     setLoading(false)
   }
+
+  useEffect(() => {
+    Promise.resolve().then(fetchDoubts)
+  }, [])
 
   const filtered = doubts
     .filter(d => subject === 'All' || d.subject === subject)
@@ -52,6 +54,7 @@ export default function ForumTab({ user }) {
           { label: 'Open',         value: stats.open,        color: '#fbbf24' },
           { label: 'Resolved',     value: stats.resolved,    color: '#34d399' },
           { label: 'Answers',      value: stats.totalAnswers, color: '#67e8f9' },
+          { label: 'My Credits',   value: userCredits,       color: '#fbbf24' },
         ].map(s => (
           <div key={s.label} style={{ ...S.glassCard, padding: '14px 22px', textAlign: 'center', minWidth: 100 }}>
             <div style={{ fontSize: 22, fontFamily: 'Syne,sans-serif', fontWeight: 800, color: s.color }}>{s.value}</div>
@@ -137,7 +140,7 @@ function DoubtCard({ doubt: d, onClick }) {
   )
 }
 
-function PostModal({ user, onClose, onPosted }) {
+function PostModal({ onClose, onPosted }) {
   const [form, setForm] = useState({ title: '', description: '', subject: 'Computer Science', college: 'SRM KTR' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

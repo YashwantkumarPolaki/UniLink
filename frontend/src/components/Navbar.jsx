@@ -5,8 +5,8 @@ import UniLinkLogo from './UniLinkLogo'
 
 const NAV_ITEMS = {
   student: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found', 'Mock Interview'],
-  faculty: ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found'],
-  club:    ['Dashboard', 'Events', 'Opportunities', 'Lost & Found'],
+  faculty: ['Dashboard', 'Events', 'Doubts', 'Opportunities'],
+  club:    ['Dashboard', 'Events', 'Opportunities'],
   company: ['Dashboard', 'Opportunities'],
   admin:   ['Dashboard', 'Events', 'Doubts', 'Opportunities', 'Lost & Found', 'Admin'],
 }
@@ -81,7 +81,10 @@ export default function Navbar() {
   }, [])
 
   // Close menu on route change
-  useEffect(() => { setMenuOpen(false) }, [location.pathname])
+  useEffect(() => {
+    // Scroll to top on navigation
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   const openBell = () => {
     setShowBell(v => !v)
@@ -273,7 +276,7 @@ export default function Navbar() {
           {navItems.map(item => {
             const active = location.pathname === NAV_PATHS[item]
             return (
-              <button key={item} onClick={() => navigate(NAV_PATHS[item])} style={{
+              <button key={item} onClick={() => { setMenuOpen(false); navigate(NAV_PATHS[item]) }} style={{
                 background: active ? `${roleColor}12` : 'transparent',
                 border: 'none',
                 borderLeft: active ? `3px solid ${roleColor}` : '3px solid transparent',
@@ -293,7 +296,7 @@ export default function Navbar() {
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', margin: '8px 0' }} />
 
           {/* Settings */}
-          <button onClick={() => navigate('/settings')} style={{
+          <button onClick={() => { setMenuOpen(false); navigate('/settings') }} style={{
             background: 'transparent', border: 'none',
             borderLeft: '3px solid transparent',
             color: 'rgba(255,255,255,0.65)',
@@ -306,7 +309,7 @@ export default function Navbar() {
           </button>
 
           {/* Sign Out */}
-          <button onClick={logout} style={{
+          <button onClick={() => { setMenuOpen(false); logout() }} style={{
             background: 'transparent', border: 'none',
             borderLeft: '3px solid transparent',
             color: '#fb7185',

@@ -137,3 +137,83 @@ async def get_analytics(current_user: dict = Depends(require_role("admin"))):
 async def get_pending_events(current_user: dict = Depends(require_role("admin"))):
     docs = db.collection("events").where("status", "==", "pending").get()
     return [{"id": d.id, **d.to_dict()} for d in docs]
+
+
+# ── GET /admin/companies/pending ──────────────────────────────────────────────
+@router.get("/companies/pending")
+async def get_pending_companies(current_user: dict = Depends(require_role("admin"))):
+    docs = db.collection("users").where("role", "==", "company").get()
+    result = []
+    for doc in docs:
+        d = doc.to_dict()
+        if not d.get("is_approved", False):
+            result.append({
+                "id": doc.id,
+                "name": d.get("name", ""),
+                "email": d.get("email", ""),
+                "company_name": d.get("company_name", ""),
+                "hiring_process": d.get("hiring_process", ""),
+                "linkedin": d.get("linkedin", ""),
+                "created_at": d.get("created_at", ""),
+            })
+    return result
+
+
+# ── PUT /admin/companies/{user_id}/approve ────────────────────────────────────
+@router.put("/companies/{user_id}/approve")
+async def approve_company(user_id: str, current_user: dict = Depends(require_role("admin"))):
+    doc = db.collection("users").document(user_id).get()
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.collection("users").document(user_id).update({"is_approved": True})
+    return {"message": "Company approved"}
+
+
+# ── DELETE /admin/companies/{user_id}/reject ──────────────────────────────────
+@router.delete("/companies/{user_id}/reject")
+async def reject_company(user_id: str, current_user: dict = Depends(require_role("admin"))):
+    doc = db.collection("users").document(user_id).get()
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.collection("users").document(user_id).delete()
+    return {"message": "Company rejected and removed"}
+
+
+# ── GET /admin/clubs/pending ──────────────────────────────────────────────────
+@router.get("/clubs/pending")
+async def get_pending_clubs(current_user: dict = Depends(require_role("admin"))):
+    docs = db.collection("users").where("role", "==", "club").get()
+    result = []
+    for doc in docs:
+        d = doc.to_dict()
+        if not d.get("is_approved", False):
+            result.append({
+                "id": doc.id,
+                "name": d.get("name", ""),
+                "email": d.get("email", ""),
+                "club_name": d.get("club_name", ""),
+                "college": d.get("college", ""),
+                "description": d.get("description", ""),
+                "created_at": d.get("created_at", ""),
+            })
+    return result
+
+
+# ── PUT /admin/clubs/{user_id}/approve ───────────────────────────────────────
+@router.put("/clubs/{user_id}/approve")
+async def approve_club(user_id: str, current_user: dict = Depends(require_role("admin"))):
+    doc = db.collection("users").document(user_id).get()
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.collection("users").document(user_id).update({"is_approved": True})
+    return {"message": "Club approved"}
+
+
+# ── DELETE /admin/clubs/{user_id}/reject ─────────────────────────────────────
+@router.delete("/clubs/{user_id}/reject")
+async def reject_club(user_id: str, current_user: dict = Depends(require_role("admin"))):
+    doc = db.collection("users").document(user_id).get()
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.collection("users").document(user_id).delete()
+    return {"message": "Club rejected and removed"}

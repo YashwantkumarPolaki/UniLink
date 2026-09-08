@@ -23,7 +23,7 @@ export default function Doubts() {
     API.get('/auth/me')
       .then(r => { setUser(r.data.user); setLoading(false) })
       .catch(() => navigate('/login'))
-  }, [])
+  }, [navigate])
 
   // AI Study tab only for students (and admins)
   const visibleTabs = TABS.filter(t =>

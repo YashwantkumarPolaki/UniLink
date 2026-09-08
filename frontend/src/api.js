@@ -17,13 +17,10 @@ API.interceptors.request.use((config) => {
 
 export default API
 export async function askAI(question) {
-  const base = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-  const res = await fetch(`${base}/ask`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question })
-  });
-
-  const data = await res.json();
-  return data.answer;
+  try {
+    const res = await API.post('/ai/ask', { prompt: question, model: 'gemini' })
+    return res.data.answer
+  } catch (err) {
+    throw new Error(err.response?.data?.detail || err.message || 'AI request failed')
+  }
 }

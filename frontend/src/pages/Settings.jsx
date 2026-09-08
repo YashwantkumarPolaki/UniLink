@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import API from '../api'
 import Navbar from '../components/Navbar'
 
@@ -25,7 +24,6 @@ function Toast({ msg, type, onDone }) {
 }
 
 export default function Settings() {
-  const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const fileRef = useRef()
 

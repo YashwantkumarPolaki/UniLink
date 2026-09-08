@@ -157,7 +157,9 @@ Rules:
 Start by asking Question 1 now. Do not introduce yourself, go straight to the question.`
 
   // Fetch first question on mount
-  useEffect(() => { fetchQuestion('', true) }, [])
+  useEffect(() => {
+    Promise.resolve().then(() => fetchQuestion('', true))
+  }, [])
 
   // Timer
   useEffect(() => {
@@ -401,7 +403,7 @@ export default function MockInterview() {
 
   useEffect(() => {
     API.get('/auth/me').catch(() => navigate('/login'))
-  }, [])
+  }, [navigate])
 
   const phaseLabel = { setup: 'Setup', interview: 'In Progress', report: 'Report' }
 

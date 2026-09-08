@@ -49,7 +49,7 @@ export default function Login() {
     if (localStorage.getItem('token') && localStorage.getItem('user')) {
       navigate('/dashboard', { replace: true })
     }
-  }, [])
+  }, [navigate])
 
   const handleLogin = async (e) => {
     e.preventDefault()

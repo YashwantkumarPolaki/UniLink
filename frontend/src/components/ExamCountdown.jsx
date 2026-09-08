@@ -103,9 +103,6 @@ export default function ExamCountdown() {
 
   const deleteExam = (id) => setExams(prev => prev.filter(e => e.id !== id))
 
-  // Min datetime for picker = now
-  const minDatetime = new Date(Date.now() - 60000).toISOString().slice(0, 16)
-
   return (
     <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 24, padding: '24px 28px' }}>
       {/* Header */}
@@ -129,7 +126,7 @@ export default function ExamCountdown() {
         <div style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: 14, padding: '16px', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input value={form.subject} onChange={e => setForm(f => ({ ...f, subject: e.target.value }))} placeholder="Subject / Exam name..."
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: 'white', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif', width: '100%', boxSizing: 'border-box' }} />
-          <input type="datetime-local" value={form.datetime} onChange={e => setForm(f => ({ ...f, datetime: e.target.value }))} min={minDatetime}
+          <input type="datetime-local" value={form.datetime} onChange={e => setForm(f => ({ ...f, datetime: e.target.value }))}
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', color: 'white', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif', width: '100%', boxSizing: 'border-box', colorScheme: 'dark' }} />
           <button onClick={addExam} disabled={!form.subject.trim() || !form.datetime}
             style={{ background: form.subject && form.datetime ? 'linear-gradient(135deg, #d97706, #fbbf24)' : 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 10, padding: '10px', color: 'white', fontWeight: 700, fontSize: 13, cursor: form.subject && form.datetime ? 'pointer' : 'not-allowed', fontFamily: 'Syne, sans-serif' }}>

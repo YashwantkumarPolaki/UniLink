@@ -39,7 +39,7 @@ export default function PostOpportunity() {
       setSuccess(true)
       setTimeout(() => navigate('/opportunities'), 2000)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to post opportunity. Only admins can post.')
+      setError(err.response?.data?.detail || 'Failed to post opportunity.')
     } finally {
       setLoading(false)
     }
@@ -67,7 +67,7 @@ export default function PostOpportunity() {
       <div style={S.page}>
         <div style={S.header}>
           <h1 style={S.pageTitle}>Post an Opportunity 💼</h1>
-          <p style={S.pageSub}>Admin-only — fill in the details to publish to students</p>
+          <p style={S.pageSub}>Fill in the details to publish an opportunity to students</p>
         </div>
 
         {error && <div style={S.errorBox}>⚠️ {error}</div>}

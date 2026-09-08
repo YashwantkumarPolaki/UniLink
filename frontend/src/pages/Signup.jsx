@@ -279,9 +279,15 @@ export default function Signup() {
 
               {/* Name + Email */}
               {role === 'company' ? (
-                <div style={S.inputGroup}>
-                  <label style={S.label}>FULL NAME</label>
-                  <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
+                <div style={S.row}>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>RECRUITER NAME</label>
+                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} style={S.input} required />
+                  </div>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>WORK / COMPANY EMAIL</label>
+                    <input name="email" type="email" placeholder="recruiter@company.com" value={form.email} onChange={handleChange} style={S.input} required />
+                  </div>
                 </div>
               ) : (
                 <div style={S.row}>
@@ -384,15 +390,9 @@ export default function Signup() {
                       <CustomSelect name="hiring_process" value={form.hiring_process} onChange={handleChange} options={['On-Campus', 'Off-Campus', 'Both']} placeholder="Select Hiring Mode" />
                     </div>
                   </div>
-                  <div style={S.row}>
-                    <div style={S.inputGroup}>
-                      <label style={S.label}>PERSONAL EMAIL</label>
-                      <input name="personal_email" type="email" placeholder="Enter personal email (gmail, etc.)" value={form.personal_email} onChange={handleChange} style={S.input} required />
-                    </div>
-                    <div style={S.inputGroup}>
-                      <label style={S.label}>LINKEDIN PROFILE (URL)</label>
-                      <input name="linkedin" type="url" placeholder="https://linkedin.com/in/yourprofile" value={form.linkedin} onChange={handleChange} style={S.input} />
-                    </div>
+                  <div style={S.inputGroup}>
+                    <label style={S.label}>LINKEDIN PROFILE (optional)</label>
+                    <input name="linkedin" type="url" placeholder="https://linkedin.com/in/yourprofile" value={form.linkedin} onChange={handleChange} style={S.input} />
                   </div>
                 </>
               )}

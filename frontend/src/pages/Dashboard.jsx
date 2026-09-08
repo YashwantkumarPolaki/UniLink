@@ -92,11 +92,16 @@ const QUOTES = [
 ]
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null)
+  const [user] = useState(() => {
+    try {
+      const u = localStorage.getItem('user')
+      return u ? JSON.parse(u) : null
+    } catch { return null }
+  })
   const [animated, setAnimated] = useState(false)
   const [events, setEvents] = useState([])
   const [doubts, setDoubts] = useState([])
-  const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)])
+  const [quote] = useState(() => QUOTES[Math.floor(Math.random() * QUOTES.length)])
   const [showCommunity, setShowCommunity] = useState(
     localStorage.getItem('community_banner_dismissed') !== 'true'
   )
@@ -105,18 +110,17 @@ export default function Dashboard() {
   const [notifAsked, setNotifAsked] = useState(false)
 
   useEffect(() => {
-    const userData = localStorage.getItem('user')
-    if (!userData) { navigate('/login'); return }
-    setUser(JSON.parse(userData))
-    setTimeout(() => setAnimated(true), 200)
+    if (!user) { navigate('/login'); return }
+    const animTimer = setTimeout(() => setAnimated(true), 200)
     // Prompt for push notifications once
-    setTimeout(() => {
+    const notifTimer = setTimeout(() => {
       if (isSupported && !isSubscribed && !notifAsked) {
         setNotifAsked(true)
         requestPermission()
       }
     }, 3000)
-  }, [])
+    return () => { clearTimeout(animTimer); clearTimeout(notifTimer) }
+  }, [user, navigate, isSupported, isSubscribed, notifAsked, requestPermission])
 
   useEffect(() => {
     if (!user) return
@@ -126,13 +130,14 @@ export default function Dashboard() {
     API.get('/doubts/').then(r => setDoubts((r.data.doubts || []).slice(0, 3))).catch(() => {})
   }, [user])
 
-  const cards = [
-    { icon: '📅', title: 'Events', desc: 'Discover & join events at your college', color: '#818cf8', glow: 'rgba(129,140,248,0.5)', path: '/events', tag: 'EXPLORE' },
-    { icon: '💬', title: 'Doubts', desc: 'Ask questions, get answers from peers', color: '#f472b6', glow: 'rgba(244,114,182,0.5)', path: '/doubts', tag: 'ASK' },
-    { icon: '💼', title: 'Opportunities', desc: 'Internships, jobs & more curated for you', color: '#34d399', glow: 'rgba(52,211,153,0.5)', path: '/opportunities', tag: 'GROW' },
-    { icon: '🔍', title: 'Lost & Found', desc: 'Lost something? Found something? Post it!', color: '#fb7185', glow: 'rgba(251,113,133,0.5)', path: '/lost-found', tag: 'CAMPUS' },
-{ icon: '🤝', title: 'Co-Founder', desc: 'Post your startup idea & find co-founders', color: '#f59e0b', glow: 'rgba(245,158,11,0.5)', path: '/cofounders', tag: 'STARTUP' },
+  const ALL_CARDS = [
+    { icon: '📅', title: 'Events', desc: 'Discover & join events at your college', color: '#818cf8', glow: 'rgba(129,140,248,0.5)', path: '/events', tag: 'EXPLORE', roles: ['student','faculty','club','admin'] },
+    { icon: '💬', title: 'Doubts', desc: 'Ask questions, get answers from peers', color: '#f472b6', glow: 'rgba(244,114,182,0.5)', path: '/doubts', tag: 'ASK', roles: ['student','faculty','admin'] },
+    { icon: '💼', title: 'Opportunities', desc: 'Internships, jobs & more curated for you', color: '#34d399', glow: 'rgba(52,211,153,0.5)', path: '/opportunities', tag: 'GROW', roles: ['student','faculty','club','company','admin'] },
+    { icon: '🔍', title: 'Lost & Found', desc: 'Lost something? Found something? Post it!', color: '#fb7185', glow: 'rgba(251,113,133,0.5)', path: '/lost-found', tag: 'CAMPUS', roles: ['student','admin'] },
+    { icon: '🤝', title: 'Co-Founder', desc: 'Post your startup idea & find co-founders', color: '#f59e0b', glow: 'rgba(245,158,11,0.5)', path: '/cofounders', tag: 'STARTUP', roles: ['student','admin'] },
   ]
+  const cards = ALL_CARDS.filter(c => c.roles.includes(user.role))
 
   const activity = [
     { icon: '🎉', text: 'You joined UniLink', time: 'Just now', color: '#a78bfa' },

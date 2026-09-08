@@ -19,8 +19,6 @@ export default function Events() {
   const [registeredIds, setRegisteredIds] = useState(new Set())
   const navigate = useNavigate()
 
-  useEffect(() => { fetchAll() }, [])
-
   const fetchAll = async () => {
     let currentUser = null
     try {
@@ -67,6 +65,10 @@ export default function Events() {
 
     setLoading(false)
   }
+
+  useEffect(() => {
+    Promise.resolve().then(fetchAll)
+  }, [])
 
   const handleRegister = async (eventId, registrationLink) => {
     try {

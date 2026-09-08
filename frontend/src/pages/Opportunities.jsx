@@ -8,14 +8,13 @@ const TYPE_ICONS = { All: '🌐', internship: '💼', job: '🏢', hackathon: '�
 const TYPE_COLORS = { internship: '#67e8f9', job: '#a78bfa', hackathon: '#f472b6', competition: '#fb923c', research: '#34d399', other: '#94a3b8' }
 
 // Local heuristic trust scorer (no external API needed — works offline, no CORS)
+// Local heuristic trust scorer (no external API needed — works offline, no CORS)
 function analyzeOpportunity(opportunity) {
   let score = 70
   const redFlags = []
   const greenFlags = []
 
-  const title = (opportunity.title || '').toLowerCase()
   const desc = (opportunity.description || '').toLowerCase()
-  const company = (opportunity.company || '').toLowerCase()
   const link = (opportunity.link || '').toLowerCase()
   const stipend = (opportunity.stipend || '').toLowerCase()
 
@@ -67,8 +66,6 @@ export default function Opportunities() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  useEffect(() => { fetchAll() }, [])
-
   const fetchAll = async () => {
     // 1. Auth check
     try {
@@ -83,13 +80,17 @@ export default function Opportunities() {
     try {
       const res = await API.get('/opportunities/')
       setOpportunities(res.data.opportunities || [])
-    } catch (e) {
+    } catch {
       setError('Failed to load opportunities. Please try again.')
       setOpportunities([])
     }
 
     setLoading(false)
   }
+
+  useEffect(() => {
+    Promise.resolve().then(fetchAll)
+  }, [])
 
   const filtered = type === 'All'
     ? opportunities

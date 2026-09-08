@@ -83,15 +83,21 @@ async def call_claude(prompt: str, max_tokens: int = 800, system: str = None,
 
 
 async def call_gemini(prompt: str) -> str:
-    if not GEMINI_KEY:
+    gemini_key = os.getenv("GEMINI_API_KEY", "")
+    if not gemini_key:
         raise HTTPException(400, "GEMINI_API_KEY not set in .env")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+    
+    models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-3.5-flash"]
     async with httpx.AsyncClient(timeout=30) as client:
-        res = await client.post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
-    data = res.json()
-    if res.status_code != 200:
-        raise HTTPException(502, data.get("error", {}).get("message", "Gemini error"))
-    return data["candidates"][0]["content"]["parts"][0]["text"]
+        for model in models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+            res = await client.post(url, json={"contents": [{"parts": [{"text": prompt}]}]})
+            data = res.json()
+            if res.status_code == 200:
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+            if data.get("error", {}).get("code") != 404:
+                raise HTTPException(502, data.get("error", {}).get("message", "Gemini error"))
+    raise HTTPException(502, "No compatible Gemini model endpoint available.")
 
 
 # ─── /ai/ask — general purpose AI call ───────────────────────────────────────

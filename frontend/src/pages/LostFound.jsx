@@ -12,9 +12,13 @@ const glass = {
 }
 
 export default function LostFound() {
-  const [user, setUser] = useState(null)
+  const [user] = useState(() => {
+    try {
+      const u = localStorage.getItem('user')
+      return u ? JSON.parse(u) : null
+    } catch { return null }
+  })
   const [posts, setPosts] = useState([])
-  const [filtered, setFiltered] = useState([])
   const [activeTab, setActiveTab] = useState('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -27,24 +31,6 @@ export default function LostFound() {
   const fileRef = useRef()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const u = localStorage.getItem('user')
-    if (!u) { navigate('/login'); return }
-    const parsed = JSON.parse(u)
-    setUser(parsed)
-    fetchPosts()
-  }, [])
-
-  useEffect(() => {
-    let result = posts
-    if (activeTab !== 'all') result = result.filter(p => p.category === activeTab)
-    if (search.trim()) result = result.filter(p =>
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.location.toLowerCase().includes(search.toLowerCase())
-    )
-    setFiltered(result)
-  }, [posts, activeTab, search])
-
   const fetchPosts = async () => {
     setLoading(true)
     try {
@@ -53,6 +39,15 @@ export default function LostFound() {
     } catch { setError('Could not load posts.') }
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (!user) { navigate('/login'); return }
+    Promise.resolve().then(fetchPosts)
+  }, [user, navigate])
+
+  const filtered = posts
+    .filter(p => activeTab === 'all' || p.category === activeTab)
+    .filter(p => !search.trim() || p.title.toLowerCase().includes(search.toLowerCase()) || p.location.toLowerCase().includes(search.toLowerCase()))
 
   const handleImage = (file) => {
     if (!file) return

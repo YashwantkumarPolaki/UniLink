@@ -118,7 +118,7 @@ export default function LeaderboardTab({ user }) {
           </div>
 
           {/* Progress to next rank */}
-          <NextRankProgress credits={currentUser.credits} rank={rank} />
+          <NextRankProgress credits={currentUser.credits} />
         </div>
 
         {/* Credit Rules */}
@@ -168,7 +168,7 @@ export default function LeaderboardTab({ user }) {
   )
 }
 
-function NextRankProgress({ credits, rank }) {
+function NextRankProgress({ credits }) {
   const thresholds = [50, 150, 400, 1000, Infinity]
   const labels =     ['Learner', 'Contributor', 'Expert', 'Campus Mentor', '']
   const nextIdx = thresholds.findIndex(t => credits < t)
